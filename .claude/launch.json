@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "나무의사-합격노트",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "3030", "-s", "C:\\Users\\user\\Documents\\나무의사-합격노트"],
+      "port": 3030
+    }
+  ]
+}

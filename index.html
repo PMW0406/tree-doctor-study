@@ -3,164 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>나무의사 합격노트 🌳</title>
+  <title>자격증 합격노트</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(160deg, #1a2e1a 0%, #2d4a1e 40%, #3d5a2e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .hub-header { text-align: center; margin-bottom: 48px; }
+    .hub-emoji { font-size: 52px; display: block; margin-bottom: 12px; }
+    .hub-title { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+    .hub-sub { font-size: 14px; color: rgba(255,255,255,0.65); }
+
+    .cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 740px; }
+
+    .exam-card {
+      background: rgba(255,255,255,0.07);
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 36px 32px 28px;
+      width: 320px;
+      text-decoration: none;
+      transition: all .25s;
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .exam-card:hover {
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.35);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .card-icon { font-size: 44px; margin-bottom: 16px; }
+    .card-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      letter-spacing: .5px;
+    }
+    .tag-plant { background: rgba(245,158,11,0.25); color: #fbbf24; }
+    .tag-tree  { background: rgba(52,211,153,0.2);  color: #6ee7b7; }
+
+    .card-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+    .card-desc  { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.65; margin-bottom: 20px; flex: 1; }
+
+    .card-subjects { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+    .subject-chip {
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.8);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .card-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-plant { background: #f59e0b; color: #fff; }
+    .btn-plant:hover { background: #d97706; }
+    .btn-tree  { background: #34d399; color: #064e3b; }
+    .btn-tree:hover  { background: #10b981; }
+
+    .hub-footer { margin-top: 40px; text-align: center; color: rgba(255,255,255,0.35); font-size: 12px; }
+
+    .order-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 6px 14px;
+      color: rgba(255,255,255,0.55);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 36px;
+    }
+    .order-badge span { color: #fbbf24; }
+
+    @media (max-width: 500px) {
+      .exam-card { width: 100%; max-width: 360px; padding: 28px 22px 22px; }
+      .hub-title { font-size: 22px; }
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <span class="logo">🌳</span>
-    <h1>나무의사 합격노트</h1>
-  </div>
-</header>
-
-<nav>
-  <div class="nav-inner">
-    <button data-page="home" class="active">🏠 홈</button>
-    <button data-page="theory">📖 이론</button>
-    <button data-page="quiz">📝 문제풀이</button>
-    <button data-page="wrong">❌ 오답노트</button>
-  </div>
-</nav>
-
-<main>
-
-  <!-- ══ 홈 ══ -->
-  <div id="page-home" class="page active">
-    <div class="home-hero">
-      <h2>나무의사 합격노트 🌳</h2>
-      <p>초급 → 중급 → 고급 단계를 차근차근 밟아가며 합격을 준비하세요!</p>
-      <div class="total-progress-wrap">
-        <div class="total-progress-label">
-          <span>전체 진행률</span>
-          <span id="total-progress-pct">0%</span>
-        </div>
-        <div class="total-progress-bar">
-          <div class="total-progress-fill" id="total-progress-fill" style="width:0%"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-title">📚 단계별 학습 경로</div>
-    <div class="stages-grid" id="stages-grid"></div>
+  <div class="hub-header">
+    <span class="hub-emoji">📚</span>
+    <h1 class="hub-title">자격증 합격노트</h1>
+    <p class="hub-sub">공부할 시험을 선택하세요</p>
   </div>
 
-  <!-- ══ 이론 ══ -->
-  <div id="page-theory" class="page">
-    <div id="theory-list-view">
-      <div class="section-title">📖 이론 정리</div>
-      <div class="filter-bar" id="theory-filter-bar"></div>
-      <div class="theory-list" id="theory-list"></div>
-    </div>
-    <div id="theory-detail-view" style="display:none"></div>
+  <div class="order-badge">
+    💡 순서: <span>식물보호기능사</span> 먼저 → <span>나무의사</span>
   </div>
 
-  <!-- ══ 문제풀이 ══ -->
-  <div id="page-quiz" class="page">
+  <div class="cards">
 
-    <div id="quiz-setup">
-      <div class="section-title">📝 난이도 선택</div>
-      <div class="quiz-level-tabs">
-        <div class="quiz-level-tab sel-초급" data-level="초급" onclick="selectQuizLevel('초급')">
-          <span class="tab-icon">🌱</span>초급
-          <span class="tab-count">0문제</span>
-        </div>
-        <div class="quiz-level-tab" data-level="중급" onclick="selectQuizLevel('중급')">
-          <span class="tab-icon">🌿</span>중급
-          <span class="tab-count">0문제</span>
-        </div>
-        <div class="quiz-level-tab" data-level="고급" onclick="selectQuizLevel('고급')">
-          <span class="tab-icon">🌳</span>고급
-          <span class="tab-count">0문제</span>
-        </div>
-        <div class="quiz-level-tab" data-level="전체" onclick="selectQuizLevel('전체')">
-          <span class="tab-icon">📚</span>전체
-          <span class="tab-count">0문제</span>
-        </div>
+    <a class="exam-card" href="식물보호기능사/index.html">
+      <span class="card-icon">🌿</span>
+      <span class="card-tag tag-plant">STEP 1 · 기능사</span>
+      <div class="card-title">식물보호기능사</div>
+      <div class="card-desc">나무의사 응시 자격 취득을 위한 첫 번째 관문. 식물병리·해충·잡초·농약 4과목으로 구성돼요.</div>
+      <div class="card-subjects">
+        <span class="subject-chip">🍄 식물병리학</span>
+        <span class="subject-chip">🐛 농업해충학</span>
+        <span class="subject-chip">🌿 잡초방제학</span>
+        <span class="subject-chip">🧪 농약학</span>
       </div>
+      <button class="card-btn btn-plant">공부 시작하기 →</button>
+    </a>
 
-      <div class="section-title">⚡ 풀이 방식</div>
-      <div class="quiz-mode-grid">
-        <div class="quiz-mode-btn" onclick="selectQuizMode('random', this)">
-          <span class="mode-icon">🎲</span>
-          <div class="mode-title">랜덤 10문제</div>
-          <div class="mode-desc">무작위 출제</div>
-        </div>
-        <div class="quiz-mode-btn" onclick="selectQuizMode('all', this)">
-          <span class="mode-icon">📚</span>
-          <div class="mode-title">전체 풀기</div>
-          <div class="mode-desc">선택 레벨 전체</div>
-        </div>
-        <div class="quiz-mode-btn" onclick="selectQuizMode('wrong', this)">
-          <span class="mode-icon">❌</span>
-          <div class="mode-title">오답만</div>
-          <div class="mode-desc">틀린 문제 복습</div>
-        </div>
+    <a class="exam-card" href="나무의사/index.html">
+      <span class="card-icon">🌳</span>
+      <span class="card-tag tag-tree">STEP 2 · 나무의사</span>
+      <div class="card-title">나무의사</div>
+      <div class="card-desc">수목 병해충 진단·방제 전문 자격. 수목병리·수목해충·수목생리·산림토양·수목관리 5과목.</div>
+      <div class="card-subjects">
+        <span class="subject-chip">🦠 수목병리학</span>
+        <span class="subject-chip">🐛 수목해충학</span>
+        <span class="subject-chip">🌱 수목생리학</span>
+        <span class="subject-chip">🌍 산림토양학</span>
+        <span class="subject-chip">✂️ 수목관리학</span>
       </div>
-
-      <button id="start-quiz-btn" class="start-quiz-btn" onclick="startQuiz()" disabled>
-        문제풀이 시작 →
-      </button>
-    </div>
-
-    <!-- 문제 풀기 화면 -->
-    <div id="quiz-player" class="quiz-player">
-      <div class="quiz-progress-bar">
-        <div class="quiz-progress-fill" id="quiz-progress-fill" style="width:0%"></div>
-      </div>
-      <div style="background:var(--white);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)">
-        <div class="quiz-meta">
-          <div style="display:flex;gap:8px;align-items:center">
-            <span class="quiz-subject-tag" id="quiz-subject-tag"></span>
-            <span id="quiz-level-tag" class="quiz-level-tag-small"></span>
-          </div>
-          <span class="quiz-num" id="quiz-num"></span>
-        </div>
-        <div class="quiz-question" id="quiz-question-text"></div>
-        <div id="quiz-choices"></div>
-        <div id="quiz-result-panel" class="quiz-result-panel"></div>
-        <div class="quiz-action-row" id="quiz-action-row" style="display:none">
-          <button class="view-theory-btn" id="view-theory-btn" style="display:none">📖 이론 보기</button>
-          <button class="quiz-next-btn" id="quiz-next-btn">다음 문제 →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 결과 화면 -->
-    <div id="quiz-finish" class="quiz-finish">
-      <div class="finish-card">
-        <div class="finish-score" id="finish-score">0/0</div>
-        <div class="finish-label" id="finish-pct">정답률 0%</div>
-        <div class="finish-msg" id="finish-msg"></div>
-        <div class="finish-actions">
-          <button class="finish-btn primary" onclick="retryQuiz()">🔄 다시 풀기</button>
-          <button class="finish-btn secondary" onclick="goTo('wrong');renderWrongNote()">❌ 오답 확인</button>
-          <button class="finish-btn secondary" onclick="goTo('quiz');renderQuizSetup()">← 문제 선택</button>
-        </div>
-      </div>
-    </div>
+      <button class="card-btn btn-tree">공부 시작하기 →</button>
+    </a>
 
   </div>
 
-  <!-- ══ 오답노트 ══ -->
-  <div id="page-wrong" class="page">
-    <div class="section-title">
-      ❌ 오답노트
-      <span id="wrong-count-badge" style="background:var(--wrong-bg);color:var(--wrong);font-size:12px;padding:3px 10px;border-radius:20px;font-weight:700"></span>
-    </div>
-    <div id="wrong-note-list"></div>
+  <div class="hub-footer">
+    <p>초급 → 중급 → 고급 단계별 학습 · 이론 + 문제풀이 + 오답노트</p>
   </div>
 
-</main>
-
-<div id="toast" class="toast"></div>
-
-<script src="data/theories.js"></script>
-<script src="data/questions.js"></script>
-<script src="app.js"></script>
 </body>
 </html>
