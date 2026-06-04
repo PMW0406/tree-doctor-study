@@ -32,6 +32,110 @@ function subjectIcon(s) {
   return { '식물병리학': '🍄', '농업해충학': '🐛', '잡초방제학': '🌿', '농약학': '🧪' }[s] || '📚';
 }
 
+function sampleFrom(arr, n) {
+  if (!arr.length || n <= 0) return [];
+  return shuffle(arr).slice(0, Math.min(n, arr.length));
+}
+
+function buildBalancedPool(source, total, levelRatio = { '초급': 0.3, '중급': 0.45, '고급': 0.25 }) {
+  if (!source.length) return [];
+
+  const byLevel = {
+    '초급': source.filter(q => q.level === '초급'),
+    '중급': source.filter(q => q.level === '중급'),
+    '고급': source.filter(q => q.level === '고급')
+  };
+
+  const want = {
+    '초급': Math.round(total * levelRatio['초급']),
+    '중급': Math.round(total * levelRatio['중급']),
+    '고급': Math.round(total * levelRatio['고급'])
+  };
+
+  let picked = [];
+  ['초급', '중급', '고급'].forEach(level => {
+    picked = picked.concat(sampleFrom(byLevel[level], want[level]));
+  });
+
+  if (picked.length < total) {
+    const remain = shuffle(source.filter(q => !picked.find(p => p.id === q.id)));
+    picked = picked.concat(remain.slice(0, total - picked.length));
+  }
+
+  return shuffle(picked).slice(0, total);
+}
+
+function buildExamPool(level) {
+  const src = QUESTIONS.filter(q => q.type === 'multiple' && (level === '전체' ? true : q.level === level));
+  if (!src.length) return [];
+
+  const subjects = ['식물병리학', '농업해충학', '잡초방제학', '농약학'];
+  const target = level === '전체' ? 80 : 60;
+  const perSubject = Math.floor(target / subjects.length);
+  let pool = [];
+
+  subjects.forEach(s => {
+    const subjectSet = src.filter(q => q.subject === s);
+    const picked = level === '전체'
+      ? buildBalancedPool(subjectSet, perSubject, { '초급': 0.2, '중급': 0.45, '고급': 0.35 })
+      : sampleFrom(subjectSet, perSubject);
+    pool = pool.concat(picked);
+  });
+
+  if (pool.length < target) {
+    const remain = shuffle(src.filter(q => !pool.find(p => p.id === q.id)));
+    pool = pool.concat(remain.slice(0, target - pool.length));
+  }
+
+  return shuffle(pool);
+}
+
+function buildWeakTopicPool(level, total = 30) {
+  const wrong = loadWrongNote();
+  if (!wrong.length) return [];
+
+  const weighted = {};
+  wrong.forEach(w => {
+    const key = `${w.subject || '기타'}::${w.topic || '기타'}`;
+    weighted[key] = (weighted[key] || 0) + (w.count || 1);
+  });
+
+  const topKeys = Object.keys(weighted)
+    .sort((a, b) => weighted[b] - weighted[a])
+    .slice(0, 4);
+
+  let source = [];
+  topKeys.forEach(k => {
+    const [subject, topic] = k.split('::');
+    const subset = QUESTIONS.filter(q =>
+      q.subject === subject &&
+      (topic === '기타' || q.topic === topic) &&
+      (level === '전체' ? true : q.level === level)
+    );
+    source = source.concat(subset);
+  });
+
+  const wrongIds = new Set(wrong.map(w => w.questionId));
+  const wrongOnly = QUESTIONS.filter(q => wrongIds.has(q.id) && (level === '전체' ? true : q.level === level));
+  source = source.concat(wrongOnly);
+
+  const dedup = [];
+  const seen = new Set();
+  source.forEach(q => {
+    if (!seen.has(q.id)) {
+      dedup.push(q);
+      seen.add(q.id);
+    }
+  });
+
+  if (dedup.length < total) {
+    const backup = QUESTIONS.filter(q => !seen.has(q.id) && (level === '전체' ? true : q.level === level));
+    dedup.push(...sampleFrom(backup, total - dedup.length));
+  }
+
+  return shuffle(dedup).slice(0, total);
+}
+
 // ── Stage Completion % ────────────────────────
 function stageCompletion(level) {
   const p = loadProgress()[level];
@@ -269,10 +373,19 @@ function startQuiz() {
   let pool;
   if (quizState.mode === 'random') {
     const src = level === '전체' ? QUESTIONS : QUESTIONS.filter(q => q.level === level);
-    pool = shuffle(src).slice(0, 10);
+    pool = level === '전체' ? buildBalancedPool(src, 20) : shuffle(src).slice(0, 20);
+  } else if (quizState.mode === 'balanced') {
+    const src = level === '전체' ? QUESTIONS : QUESTIONS.filter(q => q.level === level);
+    pool = level === '전체' ? buildBalancedPool(src, 40) : shuffle(src).slice(0, 40);
   } else if (quizState.mode === 'all') {
     const src = level === '전체' ? QUESTIONS : QUESTIONS.filter(q => q.level === level);
-    pool = shuffle(src);
+    pool = level === '전체' ? buildBalancedPool(src, Math.min(src.length, 180)) : shuffle(src);
+  } else if (quizState.mode === 'exam') {
+    pool = buildExamPool(level);
+    if (!pool.length) { showToast('실전 모드 문제를 만들 수 없어요'); return; }
+  } else if (quizState.mode === 'weak') {
+    pool = buildWeakTopicPool(level, 30);
+    if (!pool.length) { showToast('취약주제 데이터가 부족해요. 먼저 오답을 쌓아주세요!'); return; }
   } else if (quizState.mode === 'wrong') {
     const wrongNote = loadWrongNote();
     const wrongIds = wrongNote.map(w => w.questionId);
@@ -383,6 +496,7 @@ function selectAnswer(idx) {
     const existing = wrongNote.findIndex(w => w.questionId === q.id);
     const entry = {
       questionId: q.id, subject: q.subject, level: q.level,
+      topic: q.topic,
       question: q.question,
       selectedAnswer: q.type === 'ox' ? (idx === 0 ? 'O (맞다)' : 'X (틀리다)') : q.choices[idx],
       correctAnswer: q.type === 'ox' ? (q.answer === 0 ? 'O (맞다)' : 'X (틀리다)') : q.choices[q.answer],
@@ -413,6 +527,13 @@ function showFinish() {
     : pct >= 80 ? '훌륭해요! 조금만 더 하면 완벽해요 👏'
     : pct >= 60 ? '양호해요. 틀린 문제를 이론과 함께 복습해 보세요 📖'
     : '오답노트로 틀린 개념을 꼭 다시 확인하세요 💪';
+
+  if (quizState.mode === 'exam') {
+    msg += ' 실전 모드는 5지선다 중심으로 구성됩니다.';
+  }
+  if (quizState.mode === 'weak') {
+    msg += ' 취약주제 재시험으로 약점을 집중 보완했어요.';
+  }
   document.getElementById('finish-msg').textContent = msg;
   renderHome(); // 홈 진행률 업데이트
 }
@@ -441,7 +562,11 @@ function renderWrongNote() {
 
   document.getElementById('wrong-count-badge').textContent = wrongNote.length + '개';
   list.innerHTML = `
-    <button class="clear-wrong-btn" onclick="clearWrongNote()">🗑️ 오답노트 초기화</button>
+    <div class="wrong-tools">
+      <button class="retry-btn" onclick="startWeakTopicFromWrong(20)">🔥 취약주제 20문제</button>
+      <button class="retry-btn" onclick="startWeakTopicFromWrong(40)">🎯 취약주제 40문제</button>
+      <button class="clear-wrong-btn" onclick="clearWrongNote()">🗑️ 오답노트 초기화</button>
+    </div>
     ${wrongNote.map((w, i) => `
       <div class="wrong-note-card">
         <div class="wrong-note-meta">
@@ -467,6 +592,14 @@ function retryWrongSingle(idx) {
   if (!q) { showToast('문제를 찾을 수 없어요'); return; }
   goTo('quiz');
   beginQuiz([q], q.level);
+}
+
+function startWeakTopicFromWrong(size) {
+  const pool = buildWeakTopicPool('전체', size);
+  if (!pool.length) { showToast('취약주제 문제를 만들 수 없어요'); return; }
+  goTo('quiz');
+  quizState.mode = 'weak';
+  beginQuiz(pool, null);
 }
 
 function clearWrongNote() {

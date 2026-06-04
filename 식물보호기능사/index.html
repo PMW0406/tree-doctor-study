@@ -87,13 +87,28 @@
       <div class="quiz-mode-grid">
         <div class="quiz-mode-btn" onclick="selectQuizMode('random', this)">
           <span class="mode-icon">🎲</span>
-          <div class="mode-title">랜덤 10문제</div>
-          <div class="mode-desc">무작위 출제</div>
+          <div class="mode-title">랜덤 20문제</div>
+          <div class="mode-desc">빠른 점검</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('balanced', this)">
+          <span class="mode-icon">⚖️</span>
+          <div class="mode-title">균형 40문제</div>
+          <div class="mode-desc">난이도 균형 출제</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('exam', this)">
+          <span class="mode-icon">🎯</span>
+          <div class="mode-title">실전 5지선다</div>
+          <div class="mode-desc">객관식 중심 실전형</div>
         </div>
         <div class="quiz-mode-btn" onclick="selectQuizMode('all', this)">
           <span class="mode-icon">📚</span>
           <div class="mode-title">전체 풀기</div>
           <div class="mode-desc">선택 레벨 전체</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('weak', this)">
+          <span class="mode-icon">🔥</span>
+          <div class="mode-title">취약주제 집중</div>
+          <div class="mode-desc">오답 기반 30문제</div>
         </div>
         <div class="quiz-mode-btn" onclick="selectQuizMode('wrong', this)">
           <span class="mode-icon">❌</span>

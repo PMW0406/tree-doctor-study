@@ -425,6 +425,7 @@ main { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
 .wrong-note-empty .empty-icon { font-size: 52px; margin-bottom: 12px; }
 
 .wrong-note-list { display: flex; flex-direction: column; gap: 12px; }
+.wrong-tools { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
 .wrong-note-card { background: var(--white); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); border-left: 5px solid var(--wrong); }
 .wrong-note-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
 .wrong-note-subject { background: var(--wrong-bg); color: var(--wrong); border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 700; }

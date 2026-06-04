@@ -656,3 +656,259 @@ const QUESTIONS = [
    answer:1,
    explanation:"도열병: 곰팡이(Magnaporthe oryzae), 흰잎마름병: 세균(Xanthomonas oryzae), 잎집무늬마름병: 곰팡이(Rhizoctonia solani)예요. 흰잎마름병만 세균성 병인 것이 시험 핵심이에요.",linkedTheory:"t007"}
 ];
+
+// 대량 확장 문제 세트 (기존 문제 유지 + 추가 생성)
+(function buildExpandedQuestionBank() {
+  const extra = [];
+  let seq = 1001;
+
+  const nextId = () => `qx${seq++}`;
+
+  function pickWrong(pool, correct, count, seed) {
+    const src = pool.filter(v => v !== correct);
+    const out = [];
+    for (let i = 0; i < src.length && out.length < count; i++) {
+      const idx = (seed + i * 3) % src.length;
+      const v = src[idx];
+      if (!out.includes(v)) out.push(v);
+    }
+    for (let i = 0; i < src.length && out.length < count; i++) {
+      if (!out.includes(src[i])) out.push(src[i]);
+    }
+    return out.slice(0, count);
+  }
+
+  function makeChoices(correct, pool, seed) {
+    const wrong = pickWrong(pool, correct, 4, seed);
+    const choices = [correct, ...wrong];
+    const shift = seed % choices.length;
+    const rotated = choices.slice(shift).concat(choices.slice(0, shift));
+    return { choices: rotated, answer: rotated.indexOf(correct) };
+  }
+
+  const virusVector = [
+    ["CMV", "진딧물", "오이모자이크병의 대표 전파 경로는 진딧물 매개예요."],
+    ["PVY", "진딧물", "감자Y바이러스도 주로 진딧물류가 매개해요."],
+    ["TSWV", "꽃노랑총채벌레", "TSWV는 총채벌레 매개가 핵심이에요."],
+    ["TYLCV", "담배가루이", "TYLCV는 담배가루이가 대표 매개충이에요."],
+    ["RSV", "애멸구", "벼 줄무늬잎마름병은 애멸구 매개예요."],
+    ["TMV", "즙액 접촉", "TMV는 작업 도구·손 접촉으로 전파돼요."],
+    ["WMV", "진딧물", "수박모자이크바이러스도 진딧물 매개 비중이 높아요."]
+  ];
+  const vectorPool = ["진딧물", "꽃노랑총채벌레", "담배가루이", "애멸구", "벼멸구", "즙액 접촉", "종자 전염", "토양 전염"];
+
+  virusVector.forEach(([virus, vector, exp], i) => {
+    const c1 = makeChoices(vector, vectorPool, i + 1);
+    extra.push({
+      id: nextId(), level: "중급", type: "multiple", subject: "식물병리학", topic: "바이러스병",
+      question: `${virus}의 대표 전파 경로(매개)로 옳은 것은?`,
+      choices: c1.choices, answer: c1.answer,
+      explanation: exp, linkedTheory: "t014"
+    });
+
+    const c2 = makeChoices(virus, virusVector.map(v => v[0]), i + 11);
+    extra.push({
+      id: nextId(), level: "중급", type: "multiple", subject: "식물병리학", topic: "바이러스병",
+      question: `대표 매개가 ${vector}인 바이러스로 옳은 것은?`,
+      choices: c2.choices, answer: c2.answer,
+      explanation: `${vector} 매개 바이러스-작물 조합은 시험에서 반복 출제돼요.`, linkedTheory: "t014"
+    });
+
+    extra.push({
+      id: nextId(), level: "중급", type: "ox", subject: "식물병리학", topic: "바이러스병",
+      question: `${virus}는 ${vector}에 의해 주로 전파된다.`,
+      choices: ["맞다 (O)", "틀리다 (X)"], answer: 0,
+      explanation: exp, linkedTheory: "t014"
+    });
+  });
+
+  const diseaseAgent = [
+    ["역병", "난균류", "t002"], ["노균병", "난균류", "t004"], ["흰가루병", "자낭균", "t004"],
+    ["녹병", "담자균", "t004"], ["도열병", "곰팡이", "t005"], ["흰잎마름병", "세균", "t005"],
+    ["잎집무늬마름병", "곰팡이", "t005"], ["탄저병", "곰팡이", "t003"], ["무름병", "세균", "t015"],
+    ["풋마름병", "세균", "t015"], ["불마름병", "세균", "t015"], ["뿌리혹선충병", "선충", "t017"],
+    ["모잘록병", "곰팡이", "t006"], ["덩굴쪼김병", "곰팡이", "t006"], ["배추뿌리혹병", "원생생물", "t006"],
+    ["잿빛곰팡이병", "곰팡이", "t004"], ["사과 검은별무늬병", "곰팡이", "t016"], ["사과 부란병", "곰팡이", "t016"],
+    ["벼 깨씨무늬병", "곰팡이", "t016"], ["흰비단병", "곰팡이", "t016"]
+  ];
+  const agentPool = ["난균류", "자낭균", "담자균", "곰팡이", "세균", "바이러스", "선충", "원생생물"];
+
+  diseaseAgent.forEach(([disease, agent, theory], i) => {
+    const c1 = makeChoices(agent, agentPool, i + 21);
+    extra.push({
+      id: nextId(), level: "중급", type: "multiple", subject: "식물병리학", topic: "병원체 구분",
+      question: `${disease}의 원인 병원체 분류로 옳은 것은?`,
+      choices: c1.choices, answer: c1.answer,
+      explanation: `${disease}는 ${agent}성 병해로 분류하는 문제가 자주 나와요.`, linkedTheory: theory
+    });
+
+    const c2 = makeChoices(disease, diseaseAgent.map(v => v[0]), i + 31);
+    extra.push({
+      id: nextId(), level: "고급", type: "multiple", subject: "식물병리학", topic: "병원체 역추적",
+      question: `${agent}성 병해로 가장 적절한 것은?`,
+      choices: c2.choices, answer: c2.answer,
+      explanation: `병해를 병원체군으로 묶어 외우면 방제약 선택 실수를 줄일 수 있어요.`, linkedTheory: theory
+    });
+
+    extra.push({
+      id: nextId(), level: i % 2 === 0 ? "중급" : "고급", type: "ox", subject: "식물병리학", topic: "병원체 구분",
+      question: `${disease}는 ${agent}이(가) 원인이다.`,
+      choices: ["맞다 (O)", "틀리다 (X)"], answer: 0,
+      explanation: `핵심 병해-병원체 쌍은 반복 암기가 가장 효율적이에요.`, linkedTheory: theory
+    });
+  });
+
+  const pestFact = [
+    ["진딧물", "황색 트랩", "바이러스 매개", "t008"],
+    ["꽃노랑총채벌레", "청색 트랩", "TSWV 매개", "t008"],
+    ["온실가루이", "황색 트랩", "TYLCV 매개", "t008"],
+    ["점박이응애", "살비제", "거미류", "t008"],
+    ["배추좀나방", "Bt제", "십자화과 가해", "t009"],
+    ["파밤나방", "다이아미드계", "고온기 다발", "t009"],
+    ["거세미나방", "야행성", "지제부 절단", "t009"],
+    ["이화명나방", "심고/백수", "벼 가해", "t010"],
+    ["벼멸구", "비래해충", "집단 흡즙", "t010"],
+    ["애멸구", "RSV 매개", "월동 가능", "t010"],
+    ["혹명나방", "비래해충", "벼 잎 말림", "t010"],
+    ["복숭아심식나방", "과실 가해", "과실 내부 피해", "t018"],
+    ["복숭아순나방", "신초 가해", "신초 고사", "t018"],
+    ["갈색날개노린재", "흡즙 해충", "과수 피해", "t018"],
+    ["온실가루이좀벌", "천적", "가루이 방제", "t019"],
+    ["칠레이리응애", "천적", "응애 방제", "t019"],
+    ["오이이리응애", "천적", "총채벌레 방제", "t019"],
+    ["무당벌레", "천적", "진딧물 방제", "t019"]
+  ];
+  const pestPool = pestFact.map(v => v[0]);
+  const traitPool = ["황색 트랩", "청색 트랩", "살비제", "Bt제", "비래해충", "RSV 매개", "과실 가해", "신초 가해", "천적", "야행성"];
+
+  pestFact.forEach(([name, key1, key2, theory], i) => {
+    const c1 = makeChoices(key1, traitPool, i + 41);
+    extra.push({
+      id: nextId(), level: "중급", type: "multiple", subject: "농업해충학", topic: "해충 특징",
+      question: `${name}의 대표 특징으로 가장 적절한 것은?`,
+      choices: c1.choices, answer: c1.answer,
+      explanation: `${name}는 ${key1}로 연결해 외우면 실전에서 빠르게 정답을 고를 수 있어요.`, linkedTheory: theory
+    });
+
+    const c2 = makeChoices(name, pestPool, i + 51);
+    extra.push({
+      id: nextId(), level: "고급", type: "multiple", subject: "농업해충학", topic: "해충 매칭",
+      question: `${key2} 설명과 가장 관련이 깊은 해충(또는 천적)은?`,
+      choices: c2.choices, answer: c2.answer,
+      explanation: `${name} - ${key2} 조합은 출제자가 보기 함정으로 자주 바꿔 내요.`, linkedTheory: theory
+    });
+
+    extra.push({
+      id: nextId(), level: i % 2 === 0 ? "중급" : "고급", type: "ox", subject: "농업해충학", topic: "해충 특징",
+      question: `${name}의 핵심 식별 포인트는 '${key1}'이다.`,
+      choices: ["맞다 (O)", "틀리다 (X)"], answer: 0,
+      explanation: `${name}의 표준 키워드는 ${key1}, ${key2}예요.`, linkedTheory: theory
+    });
+  });
+
+  const herbicideFact = [
+    ["글리포세이트", "비선택성", "이행형", "EPSPS 저해", "t012"],
+    ["파라콰트", "비선택성", "접촉형", "광계 I 저해", "t012"],
+    ["2,4-D", "선택성", "이행형", "옥신 교란", "t012"],
+    ["부타클로르", "선택성", "토양처리", "초기 논잡초", "t012"],
+    ["할록시폽", "선택성", "경엽처리", "화본과 방제", "t031"],
+    ["이마자픽", "선택성", "이행형", "ALS 저해", "t035"],
+    ["아트라진", "선택성", "토양처리", "광계 II 저해", "t035"],
+    ["MCPA", "선택성", "경엽처리", "옥신 교란", "t035"],
+    ["시마진", "선택성", "토양처리", "광계 II 저해", "t035"],
+    ["설포닐우레아계", "선택성", "이행형", "ALS 저해", "t035"]
+  ];
+  const herbPool = herbicideFact.map(v => v[0]);
+  const mechPool = ["EPSPS 저해", "광계 I 저해", "광계 II 저해", "ALS 저해", "옥신 교란", "지질합성 저해", "세포막 파괴"];
+
+  herbicideFact.forEach(([name, sel, move, mech, theory], i) => {
+    const c1 = makeChoices(mech, mechPool, i + 61);
+    extra.push({
+      id: nextId(), level: "중급", type: "multiple", subject: "잡초방제학", topic: "제초제 작용기작",
+      question: `${name}의 주요 작용 기작으로 옳은 것은?`,
+      choices: c1.choices, answer: c1.answer,
+      explanation: `${name}는 ${mech} 계열로 분류돼요.`, linkedTheory: theory
+    });
+
+    const c2 = makeChoices(name, herbPool, i + 71);
+    extra.push({
+      id: nextId(), level: "고급", type: "multiple", subject: "잡초방제학", topic: "제초제 분류",
+      question: `${sel}·${move} 특성을 모두 만족하는 제초제로 가장 적절한 것은?`,
+      choices: c2.choices, answer: c2.answer,
+      explanation: `제초제는 선택성/비선택성, 접촉형/이행형을 동시에 묻는 복합 문제가 자주 나와요.`, linkedTheory: theory
+    });
+
+    extra.push({
+      id: nextId(), level: i % 2 === 0 ? "중급" : "고급", type: "ox", subject: "잡초방제학", topic: "제초제 작용기작",
+      question: `${name}는 ${mech}로 잡초를 방제한다.`,
+      choices: ["맞다 (O)", "틀리다 (X)"], answer: 0,
+      explanation: `${name}의 작용점은 ${mech}로 정리하세요.`, linkedTheory: theory
+    });
+  });
+
+  const pesticideFact = [
+    ["유기인계", "콜린에스테라제 저해", "클로르피리포스", "t023"],
+    ["카바메이트계", "콜린에스테라제 저해", "카보퓨란", "t023"],
+    ["피레스로이드계", "Na채널 교란", "사이퍼메트린", "t023"],
+    ["네오니코티노이드계", "니코틴성 수용체 자극", "이미다클로프리드", "t023"],
+    ["다이아미드계", "라이아노딘 수용체", "클로란트라닐리프롤", "t023"],
+    ["스트로빌루린계", "미토콘드리아 호흡 저해", "아족시스트로빈", "t024"],
+    ["EBI(DMI)계", "에르고스테롤 합성 저해", "테부코나졸", "t024"],
+    ["디카르복시미드계", "세포막 기능 교란", "이프로디온", "t024"],
+    ["보호살균제", "예방 중심", "만코제브", "t024"],
+    ["치료살균제", "침입 후 효과", "베노밀", "t024"]
+  ];
+  const classPool = pesticideFact.map(v => v[0]);
+  const moaPool = ["콜린에스테라제 저해", "Na채널 교란", "니코틴성 수용체 자극", "라이아노딘 수용체", "미토콘드리아 호흡 저해", "에르고스테롤 합성 저해", "예방 중심", "침입 후 효과"];
+
+  pesticideFact.forEach(([klass, moa, example, theory], i) => {
+    const c1 = makeChoices(moa, moaPool, i + 81);
+    extra.push({
+      id: nextId(), level: "중급", type: "multiple", subject: "농약학", topic: "농약 계통",
+      question: `${klass}의 작용 특징으로 옳은 것은?`,
+      choices: c1.choices, answer: c1.answer,
+      explanation: `${klass}의 대표 작용은 ${moa}예요.`, linkedTheory: theory
+    });
+
+    const c2 = makeChoices(klass, classPool, i + 91);
+    extra.push({
+      id: nextId(), level: "고급", type: "multiple", subject: "농약학", topic: "농약 계통",
+      question: `${example}이(가) 속하는 계통으로 가장 적절한 것은?`,
+      choices: c2.choices, answer: c2.answer,
+      explanation: `${example}은(는) ${klass} 대표 약제예요.`, linkedTheory: theory
+    });
+
+    extra.push({
+      id: nextId(), level: i % 2 === 0 ? "중급" : "고급", type: "ox", subject: "농약학", topic: "농약 계통",
+      question: `${klass} 계열은 ${moa} 기작으로 분류된다.`,
+      choices: ["맞다 (O)", "틀리다 (X)"], answer: 0,
+      explanation: `계통-작용기작-대표약제 3점 연결 학습이 고득점에 유리해요.`, linkedTheory: theory
+    });
+  });
+
+  const calcFact = [
+    ["1000배", "500L", "500mL"], ["500배", "200L", "400mL"], ["2000배", "100L", "50mL"],
+    ["400배", "80L", "200mL"], ["800배", "160L", "200mL"], ["250배", "50L", "200mL"],
+    ["1250배", "250L", "200mL"], ["100배", "20L", "200mL"], ["750배", "150L", "200mL"],
+    ["300배", "60L", "200mL"]
+  ];
+
+  calcFact.forEach(([dil, water, expected]) => {
+    extra.push({
+      id: nextId(), level: "고급", type: "multiple", subject: "농약학", topic: "희석 계산",
+      question: `${dil} 희석으로 ${water} 살포액을 만들 때 필요한 원제량은?`,
+      choices: [expected, "100mL", "300mL", "500mL", "1,000mL"],
+      answer: 0,
+      explanation: `계산식: 원제량 = 살포액량 ÷ 희석배수. 계산형은 단위 환산(mL/L) 실수에 주의하세요.`, linkedTheory: "t041"
+    });
+
+    extra.push({
+      id: nextId(), level: "고급", type: "ox", subject: "농약학", topic: "희석 계산",
+      question: `${dil} 희석 ${water} 살포액의 원제량을 ${expected}로 계산하는 것은 타당하다.`,
+      choices: ["맞다 (O)", "틀리다 (X)"], answer: 0,
+      explanation: `원제량 계산 정확도가 실제 살포 안전성에 직결돼요.`, linkedTheory: "t041"
+    });
+  });
+
+  QUESTIONS.push(...extra);
+})();
