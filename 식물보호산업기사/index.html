@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>식물보호산업기사 합격노트 🌾</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html" style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:600;text-decoration:none;margin-right:4px">← 홈</a>
+    <span class="logo">🌾</span>
+    <h1>식물보호산업기사 합격노트</h1>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button data-page="home" class="active">🏠 홈</button>
+    <button data-page="theory">📖 이론</button>
+    <button data-page="quiz">📝 문제풀이</button>
+    <button data-page="wrong">❌ 오답노트</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ══ 홈 ══ -->
+  <div id="page-home" class="page active">
+    <div class="home-hero">
+      <h2>식물보호산업기사 합격노트 🌾</h2>
+      <p>재배학 · 식물병리학 · 농림해충학 · 잡초방제학 · 농약학 — 실기(필답형) 완전 대비!</p>
+      <div class="total-progress-wrap">
+        <div class="total-progress-label">
+          <span>전체 진행률</span>
+          <span id="total-progress-pct">0%</span>
+        </div>
+        <div class="total-progress-bar">
+          <div class="total-progress-fill" id="total-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="review-widget"></div>
+
+    <div class="section-title">📚 단계별 학습 경로</div>
+    <div class="stages-grid" id="stages-grid"></div>
+
+    <div class="section-title">ℹ️ 시험 정보</div>
+    <div style="background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);font-size:13px;color:var(--text-mid);line-height:1.8">
+      실기는 <strong style="color:var(--green-dark)">100% 필답형(약 20문항)</strong>으로 출제되며, 전체 평균 60점 이상이면 합격이에요.
+      최근 출제 경향은 <strong style="color:var(--green-dark)">재배학 비중이 절반 이상</strong>으로 커서 이 사이트에서도 재배학을 가장 비중 있게 다뤄요.
+      실제 최신 회차 기출문제는 큐넷(Q-net)이나 시중 기출복원 자료로 꼭 별도 확인하세요 — 이 사이트는 개념 암기·실력 점검용이에요.
+    </div>
+  </div>
+
+  <!-- ══ 이론 ══ -->
+  <div id="page-theory" class="page">
+    <div id="theory-list-view">
+      <div class="section-title">📖 이론 정리</div>
+      <div class="filter-bar" id="theory-filter-bar"></div>
+      <div class="theory-list" id="theory-list"></div>
+    </div>
+    <div id="theory-detail-view" style="display:none"></div>
+  </div>
+
+  <!-- ══ 문제풀이 ══ -->
+  <div id="page-quiz" class="page">
+    <div id="quiz-setup">
+      <div class="section-title">📝 난이도 선택</div>
+      <div class="quiz-level-tabs">
+        <div class="quiz-level-tab sel-초급" data-level="초급" onclick="selectQuizLevel('초급')">
+          <span class="tab-icon">🌱</span>초급
+          <span class="tab-count">0문제</span>
+        </div>
+        <div class="quiz-level-tab" data-level="중급" onclick="selectQuizLevel('중급')">
+          <span class="tab-icon">🌿</span>중급
+          <span class="tab-count">0문제</span>
+        </div>
+        <div class="quiz-level-tab" data-level="고급" onclick="selectQuizLevel('고급')">
+          <span class="tab-icon">🌳</span>고급
+          <span class="tab-count">0문제</span>
+        </div>
+        <div class="quiz-level-tab" data-level="전체" onclick="selectQuizLevel('전체')">
+          <span class="tab-icon">📚</span>전체
+          <span class="tab-count">0문제</span>
+        </div>
+      </div>
+
+      <div class="section-title">⚡ 풀이 방식</div>
+      <div class="quiz-mode-grid">
+        <div class="quiz-mode-btn" onclick="selectQuizMode('random', this)">
+          <span class="mode-icon">🎲</span>
+          <div class="mode-title">랜덤 20문제</div>
+          <div class="mode-desc">빠른 점검</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('balanced', this)">
+          <span class="mode-icon">⚖️</span>
+          <div class="mode-title">균형 40문제</div>
+          <div class="mode-desc">난이도 균형 출제</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('exam', this)">
+          <span class="mode-icon">🎯</span>
+          <div class="mode-title">실전 5지선다</div>
+          <div class="mode-desc">과목 균형 실전형</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('written', this)">
+          <span class="mode-icon">✍️</span>
+          <div class="mode-title">필답형 연습</div>
+          <div class="mode-desc">실제 실기 형식(주관식)</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('all', this)">
+          <span class="mode-icon">📚</span>
+          <div class="mode-title">전체 풀기</div>
+          <div class="mode-desc">선택 레벨 전체</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('weak', this)">
+          <span class="mode-icon">🔥</span>
+          <div class="mode-title">취약주제 집중</div>
+          <div class="mode-desc">오답 기반 30문제</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('wrong', this)">
+          <span class="mode-icon">❌</span>
+          <div class="mode-title">오답만</div>
+          <div class="mode-desc">틀린 문제 복습</div>
+        </div>
+        <div class="quiz-mode-btn" onclick="selectQuizMode('timed', this)">
+          <span class="mode-icon">⏱️</span>
+          <div class="mode-title">실전 모의고사(타이머)</div>
+          <div class="mode-desc">90분 · 20문항 실전 시뮬레이션</div>
+        </div>
+      </div>
+
+      <button id="start-quiz-btn" class="start-quiz-btn" onclick="startQuiz()" disabled>
+        문제풀이 시작 →
+      </button>
+    </div>
+
+    <div id="quiz-player" class="quiz-player">
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="quiz-progress-fill" style="width:0%"></div>
+      </div>
+      <div id="mock-timer" class="mock-timer" style="display:none"></div>
+      <div style="background:var(--white);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)">
+        <div class="quiz-meta">
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="quiz-subject-tag" id="quiz-subject-tag"></span>
+            <span id="quiz-level-tag" class="quiz-level-tag-small"></span>
+          </div>
+          <span class="quiz-num" id="quiz-num"></span>
+        </div>
+        <div class="quiz-question" id="quiz-question-text"></div>
+        <div id="quiz-choices"></div>
+        <div id="quiz-result-panel" class="quiz-result-panel"></div>
+        <div class="quiz-action-row" id="quiz-action-row" style="display:none">
+          <button class="view-theory-btn" id="view-theory-btn" style="display:none">📖 이론 보기</button>
+          <button class="quiz-next-btn" id="quiz-next-btn">다음 문제 →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz-finish" class="quiz-finish">
+      <div class="finish-card">
+        <div class="finish-score" id="finish-score">0/0</div>
+        <div class="finish-label" id="finish-pct">정답률 0%</div>
+        <div class="finish-msg" id="finish-msg"></div>
+        <div class="finish-actions">
+          <button class="finish-btn primary" onclick="retryQuiz()">🔄 다시 풀기</button>
+          <button class="finish-btn secondary" onclick="goTo('wrong');renderWrongNote()">❌ 오답 확인</button>
+          <button class="finish-btn secondary" onclick="goTo('quiz');renderQuizSetup()">← 문제 선택</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 오답노트 ══ -->
+  <div id="page-wrong" class="page">
+    <div class="section-title">
+      ❌ 오답노트
+      <span id="wrong-count-badge" style="background:var(--wrong-bg);color:var(--wrong);font-size:12px;padding:3px 10px;border-radius:20px;font-weight:700"></span>
+    </div>
+    <div id="wrong-note-list"></div>
+  </div>
+
+</main>
+
+<div id="toast" class="toast"></div>
+
+<script src="data/theories.js"></script>
+<script src="data/questions.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
