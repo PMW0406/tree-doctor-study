@@ -149,13 +149,13 @@ function buildExamPool(level) {
 }
 
 function buildMockExamPool() {
-  // 실전 필답형(약 20문항) 시뮬레이션 - 재배학 비중이 절반 이상인 실제 출제 경향 반영
+  // 실전 필답형(약 20문항) 시뮬레이션 - 재배학 50%, 나머지 3과목 균등, 잡초방제학은 실제로 출제되지 않아 제외
   const weights = [
     { name: '재배학', n: 10 },
     { name: '식물병리학', n: 4 },
-    { name: '농림해충학', n: 2 },
+    { name: '농림해충학', n: 3 },
     { name: '농약학', n: 3 },
-    { name: '잡초방제학', n: 1 }
+    { name: '잡초방제학', n: 0 }
   ];
   let pool = [];
   weights.forEach(w => {
