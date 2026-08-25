@@ -117,9 +117,47 @@
       .exam-card { width: 100%; max-width: 360px; }
       .hub-title { font-size: 19px; }
     }
+
+    /* ── 전체 사이트 로그인 게이트 ── */
+    .gate-wrap { max-width: 380px; margin: 80px auto; background: #fff; border-radius: 14px; box-shadow: 0 1px 3px rgba(15,23,42,0.08); padding: 32px 28px; }
+    .gate-wrap h2 { font-size: 18px; margin-bottom: 6px; color: #1e293b; }
+    .gate-wrap p { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+    .gate-field { margin-bottom: 14px; }
+    .gate-field label { display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 5px; }
+    .gate-field input {
+      width: 100%; padding: 11px 12px; border: 2px solid #e5e7eb; border-radius: 10px;
+      font-size: 14px; font-family: inherit; box-sizing: border-box;
+    }
+    .gate-field input:focus { outline: none; border-color: #2563eb; }
+    .gate-submit {
+      width: 100%; padding: 12px; border: none; border-radius: 10px;
+      background: #1e293b; color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; margin-top: 6px;
+    }
+    .gate-submit:disabled { opacity: .6; cursor: default; }
+    .gate-error { color: #dc2626; font-size: 12px; margin-top: 10px; min-height: 16px; }
+    .logout-link { color: #94a3b8; text-decoration: none; font-size: 12px; }
+    .logout-link:hover { color: #475569; }
+    #app-content { display: flex; flex-direction: column; align-items: center; width: 100%; }
   </style>
 </head>
 <body>
+
+  <div id="site-gate" class="gate-wrap" style="display:none">
+    <h2>로그인이 필요해요</h2>
+    <p>이 사이트는 본인만 볼 수 있도록 비공개로 운영돼요.</p>
+    <div class="gate-field">
+      <label>이메일</label>
+      <input type="email" id="site-gate-email" autocomplete="username">
+    </div>
+    <div class="gate-field">
+      <label>비밀번호</label>
+      <input type="password" id="site-gate-pw" autocomplete="current-password">
+    </div>
+    <button class="gate-submit" id="site-gate-submit">로그인</button>
+    <div class="gate-error" id="site-gate-error"></div>
+  </div>
+
+  <div id="app-content" style="display:none">
 
   <div class="hub-header">
     <span class="hub-emoji">📚</span>
@@ -191,6 +229,9 @@
 
   <div class="hub-footer">
     <p>초급 → 중급 → 고급 단계별 학습 · 이론 + 문제풀이 + 오답노트</p>
+    <p style="margin-top:8px"><a href="#" class="logout-link" onclick="siteLogout();return false">🔓 로그아웃</a></p>
+  </div>
+
   </div>
 
   <script>
@@ -213,6 +254,44 @@
       const s = sumProgress(r.key);
       return `<tr><td style="font-weight:700">${r.name}</td><td>${s.read}개</td><td>${s.correct}개</td></tr>`;
     }).join('');
+  </script>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    const supabase = createClient(
+      'https://emaoowngreujdyxaigrd.supabase.co',
+      'sb_publishable_mX_MJUevqR5VVTrbZqeu_A_l47nuhAq'
+    );
+    const gate = document.getElementById('site-gate');
+    const content = document.getElementById('app-content');
+    const gateError = document.getElementById('site-gate-error');
+    const submitBtn = document.getElementById('site-gate-submit');
+
+    function showApp() { gate.style.display = 'none'; content.style.display = ''; }
+    function showGate() { content.style.display = 'none'; gate.style.display = ''; }
+
+    submitBtn.addEventListener('click', doLogin);
+    document.getElementById('site-gate-pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+
+    async function doLogin() {
+      const email = document.getElementById('site-gate-email').value.trim();
+      const password = document.getElementById('site-gate-pw').value;
+      gateError.textContent = '';
+      submitBtn.disabled = true;
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      submitBtn.disabled = false;
+      if (error) { gateError.textContent = '로그인 실패: 이메일 또는 비밀번호를 확인해주세요.'; return; }
+      showApp();
+    }
+
+    window.siteLogout = async function () {
+      await supabase.auth.signOut();
+      location.reload();
+    };
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) showApp(); else showGate();
+    });
   </script>
 
 </body>

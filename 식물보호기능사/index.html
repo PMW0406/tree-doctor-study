@@ -11,7 +11,22 @@
 </head>
 <body>
 
-<div class="app-shell">
+<div id="site-gate" class="gate-wrap" style="display:none">
+  <h2>로그인이 필요해요</h2>
+  <p>이 사이트는 본인만 볼 수 있도록 비공개로 운영돼요.</p>
+  <div class="gate-field">
+    <label>이메일</label>
+    <input type="email" id="site-gate-email" autocomplete="username">
+  </div>
+  <div class="gate-field">
+    <label>비밀번호</label>
+    <input type="password" id="site-gate-pw" autocomplete="current-password">
+  </div>
+  <button class="gate-submit" id="site-gate-submit">로그인</button>
+  <div class="gate-error" id="site-gate-error"></div>
+</div>
+
+<div class="app-shell" id="app-content" style="display:none">
 <aside class="sidebar">
   <div class="sidebar-brand"><span class="logo">🌿</span><span class="name">식물보호기능사<br>합격노트</span></div>
   <a class="sidebar-back" href="../index.html">← 전체 허브로</a>
@@ -21,6 +36,7 @@
     <button data-page="flashcard">🎴 암기카드</button>
     <button data-page="quiz">📝 문제풀이</button>
     <button data-page="wrong">❌ 오답노트</button>
+    <a href="#" onclick="siteLogout();return false">🔓 로그아웃</a>
   </nav>
 </aside>
 <div class="main-content">
@@ -178,5 +194,44 @@
 <script src="data/theories.js"></script>
 <script src="data/questions.js"></script>
 <script src="app.js"></script>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const supabase = createClient(
+  'https://emaoowngreujdyxaigrd.supabase.co',
+  'sb_publishable_mX_MJUevqR5VVTrbZqeu_A_l47nuhAq'
+);
+const gate = document.getElementById('site-gate');
+const content = document.getElementById('app-content');
+const gateError = document.getElementById('site-gate-error');
+const submitBtn = document.getElementById('site-gate-submit');
+
+function showApp() { gate.style.display = 'none'; content.style.display = ''; }
+function showGate() { content.style.display = 'none'; gate.style.display = ''; }
+
+submitBtn.addEventListener('click', doLogin);
+document.getElementById('site-gate-pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+
+async function doLogin() {
+  const email = document.getElementById('site-gate-email').value.trim();
+  const password = document.getElementById('site-gate-pw').value;
+  gateError.textContent = '';
+  submitBtn.disabled = true;
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  submitBtn.disabled = false;
+  if (error) { gateError.textContent = '로그인 실패: 이메일 또는 비밀번호를 확인해주세요.'; return; }
+  showApp();
+}
+
+window.siteLogout = async function () {
+  await supabase.auth.signOut();
+  location.reload();
+};
+
+supabase.auth.getSession().then(({ data }) => {
+  if (data.session) showApp(); else showGate();
+});
+</script>
+
 </body>
 </html>
