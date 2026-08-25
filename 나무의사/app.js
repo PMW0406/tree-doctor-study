@@ -656,9 +656,16 @@ function selectAnswer(idx) {
   // 결과 패널
   const panel = document.getElementById('quiz-result-panel');
   panel.className = 'quiz-result-panel active ' + (isCorrect ? 'correct' : 'wrong');
+  const linkedTheory = q.linkedTheory ? THEORIES.find(t => t.id === q.linkedTheory) : null;
+  const hintHtml = linkedTheory && (linkedTheory.acronym || linkedTheory.mnemonic) ? `
+    <div class="quiz-mnemonic-hint">
+      ${linkedTheory.acronym ? `<div class="acronym-box">🔤 <strong>두문자 암기</strong><br>${linkedTheory.acronym}</div>` : ''}
+      ${linkedTheory.mnemonic ? `<div class="mnemonic-box">💡 <strong>연상 암기</strong><br>${linkedTheory.mnemonic}</div>` : ''}
+    </div>` : '';
   panel.innerHTML = `
     <div class="result-label ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✅ 정답!' : '❌ 오답'}</div>
-    <div class="result-explanation">${q.explanation}</div>`;
+    <div class="result-explanation">${q.explanation}</div>
+    ${hintHtml}`;
 
   document.getElementById('quiz-action-row').style.display = 'flex';
 

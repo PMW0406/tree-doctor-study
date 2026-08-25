@@ -260,6 +260,9 @@ main { max-width: 900px; margin: 0 auto; padding: 28px 24px 80px; }
   padding: 14px 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.7; color: #5b21b6;
 }
 .acronym-box strong { color: #6d28d9; }
+.quiz-mnemonic-hint { margin-top: 4px; }
+.quiz-mnemonic-hint .acronym-box, .quiz-mnemonic-hint .mnemonic-box { margin-bottom: 8px; }
+.quiz-mnemonic-hint > div:last-child { margin-bottom: 0; }
 
 /* ══════════════════════════════════
    암기 카드 (플래시카드)
