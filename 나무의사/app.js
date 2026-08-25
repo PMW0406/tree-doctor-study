@@ -99,12 +99,12 @@ function renderHome() {
           <div class="stage-name-cell">${icons[level]} ${level}${unlocked ? '' : ' 🔒'}</div>
           <div style="font-size:11px;color:var(--text-light);margin-top:2px">${stageName}</div>
         </td>
-        <td>${p.read.length}/${totalT}</td>
-        <td>${p.total > 0 ? p.correct + '/' + Math.min(p.total, totalQ) : '0/' + totalQ}</td>
-        <td>
+        <td data-label="이론">${p.read.length}/${totalT}</td>
+        <td data-label="문제">${p.total > 0 ? p.correct + '/' + Math.min(p.total, totalQ) : '0/' + totalQ}</td>
+        <td data-label="완료율">
           <span class="mini-bar"><span class="mini-bar-fill" style="width:${pct}%"></span></span>${pct}%
         </td>
-        <td>
+        <td data-label="학습">
           <button class="table-btn primary" onclick="startStageTheory('${level}')" ${unlocked ? '' : 'disabled'}>이론</button>
           <button class="table-btn secondary" onclick="startStageQuiz('${level}')" ${unlocked ? '' : 'disabled'}>문제</button>
           ${!unlocked ? `<div style="font-size:11px;color:var(--text-light);margin-top:4px">${level === '중급' ? '초급' : '중급'} 60% 이상 시 해제</div>` : ''}

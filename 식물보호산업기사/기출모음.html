@@ -9,6 +9,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <style>
+  body { background: #f8fafc; }
+  header {
+    background: var(--white); border-bottom: 1px solid #e5e7eb;
+    padding: 14px 20px; position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
+  .header-inner .logo { font-size: 18px; }
+  header h1 { font-size: 15px; font-weight: 800; color: var(--text-dark); flex: 1; }
+  header a { color: var(--text-light) !important; font-size: 12px !important; }
+  header a:hover { color: var(--green-dark) !important; }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 20px 60px; }
+
   .gate-wrap { max-width: 380px; margin: 60px auto; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px 28px; }
   .gate-wrap h2 { font-size: 18px; margin-bottom: 6px; color: var(--text-dark); }
   .gate-wrap p { font-size: 13px; color: var(--text-light); margin-bottom: 20px; }

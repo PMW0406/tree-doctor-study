@@ -142,6 +142,8 @@ main { max-width: 900px; margin: 0 auto; padding: 28px 24px 80px; }
 
 @media (max-width: 860px) {
   .app-shell { flex-direction: column; }
+  .stat-row { flex-direction: column; }
+  .stat-tile { min-width: 0; }
   .sidebar {
     width: 100%; height: auto; position: static; flex-direction: row;
     overflow-x: auto; border-right: none; border-bottom: 1px solid #e5e7eb; padding: 10px 12px;
@@ -150,8 +152,23 @@ main { max-width: 900px; margin: 0 auto; padding: 28px 24px 80px; }
   .sidebar nav { flex-direction: row; gap: 6px; }
   .sidebar nav button, .sidebar nav a { white-space: nowrap; }
   main { padding: 18px 16px 70px; }
-  .stage-table { font-size: 12px; }
-  .stage-table th, .stage-table td { padding: 10px 8px; }
+
+  .stage-table-wrap { overflow-x: visible; border: none; background: transparent; }
+  .stage-table, .stage-table thead, .stage-table tbody, .stage-table tr, .stage-table td { display: block; width: 100%; }
+  .stage-table thead { display: none; }
+  .stage-table tr {
+    background: var(--white); border: 1px solid #e5e7eb; border-radius: var(--radius-sm);
+    padding: 12px 14px; margin-bottom: 10px; white-space: normal;
+  }
+  .stage-table td { padding: 3px 0; border-bottom: none; white-space: normal; font-size: 13px; }
+  .stage-table td[data-label]::before {
+    content: attr(data-label); display: inline-block; min-width: 46px;
+    font-size: 11px; font-weight: 700; color: var(--text-light); margin-right: 8px;
+  }
+  .stage-table td:first-child { margin-bottom: 6px; }
+  .stage-table .table-btn { margin-top: 4px; }
+
+  .sidebar nav button, .sidebar nav a { padding: 12px 14px; }
 }
 
 /* ══════════════════════════════════
