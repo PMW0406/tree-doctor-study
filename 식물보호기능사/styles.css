@@ -456,9 +456,46 @@ main { max-width: 900px; margin: 0 auto; padding: 28px 24px 80px; }
 .wrong-note-empty { text-align: center; padding: 60px 20px; color: var(--text-light); }
 .wrong-note-empty .empty-icon { font-size: 52px; margin-bottom: 12px; }
 
+.srs-summary-bar {
+  display: flex; gap: 10px; margin-bottom: 14px;
+  background: var(--white); border-radius: var(--radius); padding: 14px 10px; box-shadow: var(--shadow);
+}
+.srs-stat { flex: 1; text-align: center; }
+.srs-stat-num { display: block; font-size: 22px; font-weight: 900; color: var(--text-mid); }
+.srs-stat-num.due { color: #d97706; }
+.srs-stat-num.mastered { color: var(--correct); }
+.srs-stat-label { font-size: 11px; color: var(--text-light); font-weight: 600; }
+
+.srs-badge { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; }
+.srs-badge.due { background: #fef3c7; color: #b45309; }
+.srs-badge.upcoming { background: var(--intermediate-bg); color: var(--intermediate); }
+.srs-badge.mastered { background: var(--correct-bg); color: var(--correct); }
+
+/* ══════════════════════════════════
+   REVIEW WIDGET (에빙하우스 SRS)
+══════════════════════════════════ */
+.review-card {
+  display: flex; align-items: center; gap: 14px;
+  border-radius: var(--radius); padding: 16px 18px;
+  margin-bottom: 20px; box-shadow: var(--shadow);
+}
+.review-card.due { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; }
+.review-card.clear { background: var(--white); border: 2px solid var(--green-pale); }
+.review-card-icon { font-size: 32px; flex-shrink: 0; }
+.review-card-body { flex: 1; }
+.review-card-title { font-size: 15px; font-weight: 800; color: var(--text-dark); }
+.review-card-desc { font-size: 12px; color: var(--text-mid); margin-top: 2px; }
+.review-card-btn {
+  background: #f59e0b; color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 11px 18px; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap;
+  transition: all .2s;
+}
+.review-card-btn:hover { background: #d97706; }
+
 .wrong-note-list { display: flex; flex-direction: column; gap: 12px; }
 .wrong-tools { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
 .wrong-note-card { background: var(--white); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); border-left: 5px solid var(--wrong); }
+.wrong-note-card.mastered { border-left-color: var(--correct); opacity: .8; }
 .wrong-note-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
 .wrong-note-subject { background: var(--wrong-bg); color: var(--wrong); border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 700; }
 .wrong-note-date { font-size: 11px; color: var(--text-light); }

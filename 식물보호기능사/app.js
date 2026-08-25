@@ -7,6 +7,60 @@ function saveProgress(p) { localStorage.setItem('plantStudyProgress', JSON.strin
 function loadWrongNote() { return JSON.parse(localStorage.getItem('plantWrongNote') || '[]'); }
 function saveWrongNote(w) { localStorage.setItem('plantWrongNote', JSON.stringify(w)); }
 
+// ── 에빙하우스 망각곡선 기반 SRS(간격 반복) ──────
+const SRS_INTERVALS = [1, 3, 7, 14, 30]; // 일 단위 복습 간격
+function todayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+function addDaysISO(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+function computeDueWrongNote() {
+  const today = todayISO();
+  return loadWrongNote().filter(w => !w.mastered && (w.nextReview || today) <= today);
+}
+// 오답 발생(신규/재발) - 복습 사이클을 처음(1일 뒤)으로 리셋
+function upsertWrongNote(q, selectedText, correctText) {
+  const wrongNote = loadWrongNote();
+  const existing = wrongNote.findIndex(w => w.questionId === q.id);
+  const entry = {
+    questionId: q.id, subject: q.subject, level: q.level,
+    topic: q.topic,
+    question: q.question,
+    selectedAnswer: selectedText,
+    correctAnswer: correctText,
+    date: new Date().toLocaleDateString('ko-KR'),
+    count: existing >= 0 ? (wrongNote[existing].count || 1) + 1 : 1,
+    srsStage: 0,
+    nextReview: addDaysISO(1),
+    mastered: false
+  };
+  if (existing >= 0) wrongNote[existing] = entry;
+  else wrongNote.unshift(entry);
+  saveWrongNote(wrongNote);
+}
+// 복습 중 정답 - 다음 단계로 승급(간격이 길어짐), 마지막 단계 통과시 마스터 처리
+function advanceWrongNoteStage(questionId) {
+  const wrongNote = loadWrongNote();
+  const idx = wrongNote.findIndex(w => w.questionId === questionId);
+  if (idx < 0) return;
+  const entry = wrongNote[idx];
+  const nextStage = (entry.srsStage || 0) + 1;
+  if (nextStage >= SRS_INTERVALS.length) {
+    entry.mastered = true;
+    entry.srsStage = SRS_INTERVALS.length;
+    entry.nextReview = null;
+  } else {
+    entry.srsStage = nextStage;
+    entry.nextReview = addDaysISO(SRS_INTERVALS[nextStage]);
+  }
+  wrongNote[idx] = entry;
+  saveWrongNote(wrongNote);
+}
+
 // ── Helpers ──────────────────────────────────
 function shuffle(arr) {
   const a = [...arr];
@@ -187,6 +241,26 @@ function renderHome() {
     <div class="stat-tile"><div class="stat-label">이론 학습</div><div class="stat-value">${readAll}<span style="font-size:14px;color:var(--text-light)">/${totalTheoryAll}</span></div></div>
     <div class="stat-tile"><div class="stat-label">문제 정답</div><div class="stat-value">${correctAll}<span style="font-size:14px;color:var(--text-light)">/${totalQAll}</span></div></div>
   `;
+
+  // 오늘의 복습(에빙하우스 SRS) 위젯
+  const dueCount = computeDueWrongNote().length;
+  const totalWrongActive = loadWrongNote().filter(w => !w.mastered).length;
+  document.getElementById('review-widget').innerHTML = dueCount > 0
+    ? `<div class="review-card due">
+         <div class="review-card-icon">🔥</div>
+         <div class="review-card-body">
+           <div class="review-card-title">오늘의 복습 ${dueCount}개</div>
+           <div class="review-card-desc">에빙하우스 망각곡선 기준 복습일이에요. 지금 안 하면 다시 처음부터!</div>
+         </div>
+         <button class="review-card-btn" onclick="startTodayReview()">복습 시작 →</button>
+       </div>`
+    : `<div class="review-card clear">
+         <div class="review-card-icon">✅</div>
+         <div class="review-card-body">
+           <div class="review-card-title">오늘 복습할 문제 없음</div>
+           <div class="review-card-desc">${totalWrongActive > 0 ? `대기 중인 복습 ${totalWrongActive}개는 예정일에 알려드려요.` : '오답노트가 깨끗해요. 계속 문제를 풀어보세요!'}</div>
+         </div>
+       </div>`;
 
   const grid = document.getElementById('stages-grid');
   const rows = levels.map(level => {
@@ -565,21 +639,12 @@ function selectAnswer(idx) {
   if (isCorrect) p[level].correct = (p[level].correct || 0) + 1;
   saveProgress(p);
 
+  const selectedText = q.type === 'ox' ? (idx === 0 ? 'O (맞다)' : 'X (틀리다)') : q.choices[idx];
+  const correctText = q.type === 'ox' ? (q.answer === 0 ? 'O (맞다)' : 'X (틀리다)') : q.choices[q.answer];
   if (!isCorrect) {
-    const wrongNote = loadWrongNote();
-    const existing = wrongNote.findIndex(w => w.questionId === q.id);
-    const entry = {
-      questionId: q.id, subject: q.subject, level: q.level,
-      topic: q.topic,
-      question: q.question,
-      selectedAnswer: q.type === 'ox' ? (idx === 0 ? 'O (맞다)' : 'X (틀리다)') : q.choices[idx],
-      correctAnswer: q.type === 'ox' ? (q.answer === 0 ? 'O (맞다)' : 'X (틀리다)') : q.choices[q.answer],
-      date: new Date().toLocaleDateString('ko-KR'),
-      count: 1
-    };
-    if (existing >= 0) { entry.count = wrongNote[existing].count + 1; wrongNote[existing] = entry; }
-    else { wrongNote.unshift(entry); }
-    saveWrongNote(wrongNote);
+    upsertWrongNote(q, selectedText, correctText);
+  } else if (quizState.mode === 'review') {
+    advanceWrongNoteStage(q.id);
   }
 }
 
@@ -630,23 +695,41 @@ function renderWrongNote() {
   const list = document.getElementById('wrong-note-list');
 
   if (!wrongNote.length) {
+    document.getElementById('wrong-count-badge').textContent = '';
     list.innerHTML = `<div class="wrong-note-empty"><div class="empty-icon">🎉</div><p>오답노트가 비어 있어요!<br>문제를 풀면 틀린 문제가 자동으로 저장돼요.</p></div>`;
     return;
   }
 
-  document.getElementById('wrong-count-badge').textContent = wrongNote.length + '개';
+  const today = todayISO();
+  const active = wrongNote.filter(w => !w.mastered);
+  const dueCount = active.filter(w => (w.nextReview || today) <= today).length;
+  const masteredCount = wrongNote.length - active.length;
+
+  document.getElementById('wrong-count-badge').textContent = active.length + '개';
   list.innerHTML = `
+    <div class="srs-summary-bar">
+      <div class="srs-stat"><span class="srs-stat-num due">${dueCount}</span><span class="srs-stat-label">오늘 복습</span></div>
+      <div class="srs-stat"><span class="srs-stat-num">${Math.max(0, active.length - dueCount)}</span><span class="srs-stat-label">대기중</span></div>
+      <div class="srs-stat"><span class="srs-stat-num mastered">${masteredCount}</span><span class="srs-stat-label">🏆 마스터</span></div>
+    </div>
     <div class="wrong-tools">
-      <button class="retry-btn" onclick="startWeakTopicFromWrong(20)">🔥 취약주제 20문제</button>
-      <button class="retry-btn" onclick="startWeakTopicFromWrong(40)">🎯 취약주제 40문제</button>
+      <button class="retry-btn" onclick="startTodayReview()">🔥 오늘의 복습(${dueCount}) 시작</button>
+      <button class="retry-btn" onclick="startWeakTopicFromWrong(20)">🎯 취약주제 20문제</button>
       <button class="clear-wrong-btn" onclick="clearWrongNote()">🗑️ 오답노트 초기화</button>
     </div>
-    ${wrongNote.map((w, i) => `
-      <div class="wrong-note-card">
+    ${wrongNote.map((w, i) => {
+      const due = !w.mastered && (w.nextReview || today) <= today;
+      const daysLeft = (!w.mastered && w.nextReview) ? Math.round((new Date(w.nextReview) - new Date(today)) / 86400000) : null;
+      const badge = w.mastered ? `<span class="srs-badge mastered">🏆 마스터</span>`
+        : due ? `<span class="srs-badge due">🔥 오늘 복습</span>`
+        : `<span class="srs-badge upcoming">D-${daysLeft}</span>`;
+      return `
+      <div class="wrong-note-card ${w.mastered ? 'mastered' : ''}">
         <div class="wrong-note-meta">
-          <div style="display:flex;gap:6px;align-items:center">
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
             <span class="wrong-note-subject">${w.subject}</span>
             ${w.level ? `<span class="level-tag ${w.level}" style="font-size:10px">${w.level}</span>` : ''}
+            ${badge}
           </div>
           <span class="wrong-note-date">${w.date}${w.count > 1 ? ` · ${w.count}번 틀림` : ''}</span>
         </div>
@@ -655,8 +738,9 @@ function renderWrongNote() {
           내 답: <span style="color:var(--wrong);font-weight:700">${w.selectedAnswer}</span><br>
           정답: <span style="color:var(--correct);font-weight:700">${w.correctAnswer}</span>
         </div>
-        <button class="retry-btn" onclick="retryWrongSingle(${i})">↩ 다시 풀기</button>
-      </div>`).join('')}`;
+        ${!w.mastered ? `<button class="retry-btn" onclick="retryWrongSingle(${i})">↩ 다시 풀기</button>` : ''}
+      </div>`;
+    }).join('')}`;
 }
 
 function retryWrongSingle(idx) {
@@ -665,7 +749,19 @@ function retryWrongSingle(idx) {
   const q = QUESTIONS.find(x => x.id === w.questionId);
   if (!q) { showToast('문제를 찾을 수 없어요'); return; }
   goTo('quiz');
+  quizState.mode = 'review';
   beginQuiz([q], q.level);
+}
+
+function startTodayReview() {
+  const due = computeDueWrongNote();
+  if (!due.length) { showToast('오늘 복습할 문제가 없어요! 🎉'); return; }
+  const ids = new Set(due.map(w => w.questionId));
+  const pool = shuffle(QUESTIONS.filter(q => ids.has(q.id)));
+  if (!pool.length) { showToast('복습할 문제를 찾을 수 없어요'); return; }
+  goTo('quiz');
+  quizState.mode = 'review';
+  beginQuiz(pool, null);
 }
 
 function startWeakTopicFromWrong(size) {
