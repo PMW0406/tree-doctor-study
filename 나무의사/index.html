@@ -11,6 +11,8 @@
 </head>
 <body>
 
+<div id="site-loading" style="text-align:center;padding:100px 20px;color:var(--text-light);font-size:13px">불러오는 중...</div>
+
 <div id="site-gate" class="gate-wrap" style="display:none">
   <h2>로그인이 필요해요</h2>
   <p>이 사이트는 본인만 볼 수 있도록 비공개로 운영돼요.</p>
@@ -180,8 +182,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="data/theories.js"></script>
-<script src="data/questions.js"></script>
 <script src="app.js"></script>
 
 <script type="module">
@@ -190,13 +190,42 @@ const supabase = createClient(
   'https://emaoowngreujdyxaigrd.supabase.co',
   'sb_publishable_mX_MJUevqR5VVTrbZqeu_A_l47nuhAq'
 );
+const MODULE_NAME = '나무의사';
+
+const loading = document.getElementById('site-loading');
 const gate = document.getElementById('site-gate');
 const content = document.getElementById('app-content');
 const gateError = document.getElementById('site-gate-error');
 const submitBtn = document.getElementById('site-gate-submit');
 
-function showApp() { gate.style.display = 'none'; content.style.display = ''; }
-function showGate() { content.style.display = 'none'; gate.style.display = ''; }
+function showLoading() { gate.style.display = 'none'; content.style.display = 'none'; loading.style.display = ''; }
+function showGate() { loading.style.display = 'none'; content.style.display = 'none'; gate.style.display = ''; }
+function showApp() { loading.style.display = 'none'; gate.style.display = 'none'; content.style.display = ''; }
+
+async function loadDataAndStart() {
+  showLoading();
+  const [tRes, qRes] = await Promise.all([
+    supabase.from('cert_theories').select('*').eq('module', MODULE_NAME).order('id'),
+    supabase.from('cert_questions').select('*').eq('module', MODULE_NAME).order('id')
+  ]);
+  if (tRes.error || qRes.error) {
+    gateError.textContent = '데이터를 불러오지 못했어요. 새로고침해 주세요.';
+    showGate();
+    return;
+  }
+  const theories = tRes.data.map(r => ({
+    id: r.id, level: r.level, subject: r.subject, topic: r.topic, title: r.title, summary: r.summary,
+    keywords: r.keywords, mnemonic: r.mnemonic, acronym: r.acronym, illustration: r.illustration,
+    content: r.content, relatedQuestions: r.related_questions
+  }));
+  const questions = qRes.data.map(r => ({
+    id: r.id, level: r.level, type: r.type, subject: r.subject, topic: r.topic, question: r.question,
+    choices: r.choices, answer: r.answer, explanation: r.explanation, linkedTheory: r.linked_theory
+  }));
+  window.setData(theories, questions);
+  showApp();
+  window.startApp();
+}
 
 submitBtn.addEventListener('click', doLogin);
 document.getElementById('site-gate-pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
@@ -209,7 +238,7 @@ async function doLogin() {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   submitBtn.disabled = false;
   if (error) { gateError.textContent = '로그인 실패: 이메일 또는 비밀번호를 확인해주세요.'; return; }
-  showApp();
+  loadDataAndStart();
 }
 
 window.siteLogout = async function () {
@@ -218,7 +247,7 @@ window.siteLogout = async function () {
 };
 
 supabase.auth.getSession().then(({ data }) => {
-  if (data.session) showApp(); else showGate();
+  if (data.session) loadDataAndStart(); else showGate();
 });
 </script>
 

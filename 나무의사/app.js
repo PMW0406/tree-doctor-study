@@ -1,3 +1,11 @@
+// ── 데이터 (로그인 후 Supabase에서 비동기 로드) ──
+let THEORIES = [];
+let QUESTIONS = [];
+window.setData = function (theories, questions) {
+  THEORIES = theories;
+  QUESTIONS = questions;
+};
+
 // ── Progress Storage ─────────────────────────
 function loadProgress() {
   return JSON.parse(localStorage.getItem('studyProgress') || '{"초급":{"read":[],"correct":0,"total":0},"중급":{"read":[],"correct":0,"total":0},"고급":{"read":[],"correct":0,"total":0}}');
@@ -816,6 +824,8 @@ document.addEventListener('DOMContentLoaded', () => {
       e.target.value = '';
     });
   }
-  renderHome();
-  goTo('home');
+  window.startApp = function () {
+    renderHome();
+    goTo('home');
+  };
 });
