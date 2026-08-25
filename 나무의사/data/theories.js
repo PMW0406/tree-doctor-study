@@ -7,6 +7,8 @@ const THEORIES = [
     title: "수목병이란?",
     summary: "수목이 왜 병에 걸리는지, 병의 종류는 어떻게 나뉘는지 이해하기",
     keywords: ["수목병", "병원체", "기주", "생물적 원인", "비생물적 원인"],
+    acronym: "기-병-환 (기주·병원체·환경 삼박자가 맞아야 병)",
+    mnemonic: "기주, 병원체, 환경이 삼각형처럼 딱 맞아떨어져야 병이 생겨요. 하나라도 빠지면 병은 절대 못 일어나요!",
     illustration: `<svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px">
       <rect width="340" height="200" fill="#f0faf3" rx="12"/>
       <!-- 중앙 원: 수목병 -->
@@ -45,6 +47,8 @@ const THEORIES = [
     title: "흰가루병 (핵심 정리)",
     summary: "잎 표면에 흰색 가루가 생기는 가장 유명한 곰팡이병",
     keywords: ["흰가루병", "흰색 가루", "분말상", "균사", "건조"],
+    acronym: "표-백-건 (표면에 백색가루, 건조할 때 발생)",
+    mnemonic: "흰가루병은 마른 빨래에 밀가루를 뿌려놓은 것처럼 잎 표면이 뽀얗게 되는데, 신기하게도 건조할 때 더 잘 생겨요!",
     illustration: `<svg viewBox="0 0 320 190" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px">
       <rect width="320" height="190" fill="#f0faf3" rx="12"/>
       <!-- 잎 모양 -->
@@ -75,6 +79,8 @@ const THEORIES = [
     title: "소나무재선충병 (핵심만!)",
     summary: "소나무를 당해에 죽이는 무서운 병 - 매개충과 증상 중심으로 기억하기",
     keywords: ["재선충", "솔수염하늘소", "급격한 시들음", "고사", "매개충"],
+    acronym: "재-솔-급 (재선충을 솔수염하늘소가 옮겨 급격 고사)",
+    mnemonic: "솔수염하늘소가 밥 먹으러(후식) 왔다가 몸속 재선충을 슬쩍 떨어뜨리면, 소나무는 그 해를 못 넘기고 급사해요!",
     illustration: `<svg viewBox="0 0 340 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px">
       <rect width="340" height="210" fill="#fff8f0" rx="12"/>
       <text x="170" y="22" text-anchor="middle" font-size="13" fill="#8B4513" font-weight="bold" font-family="sans-serif">소나무재선충 전파 사이클</text>
@@ -118,6 +124,8 @@ const THEORIES = [
     title: "해충의 3가지 종류",
     summary: "식엽·흡즙·천공해충이 어떻게 다른지 기본 개념 잡기",
     keywords: ["식엽해충", "흡즙해충", "천공해충", "가해 방식"],
+    acronym: "식-흡-천 (식사하듯 갉아먹고, 흡입하고, 천공 뚫는다)",
+    mnemonic: "식엽은 잎을 씹어먹고, 흡즙은 빨대로 쪽쪽 빨고, 천공은 드릴처럼 줄기에 구멍을 뚫어요. 입 모양을 상상하면 안 헷갈려요!",
     illustration: `<svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px">
       <rect width="340" height="200" fill="#fff9f0" rx="12"/>
       <!-- 식엽해충 -->
@@ -158,6 +166,8 @@ const THEORIES = [
     title: "미국흰불나방",
     summary: "거미줄 망으로 잎을 싸고 집단 가해하는 대표 식엽해충",
     keywords: ["미국흰불나방", "거미줄 망", "집단 가해", "잡식성", "외래해충"],
+    acronym: "거-집-외 (거미줄망 속 집단가해, 외래해충)",
+    mnemonic: "미국흰불나방 유충들은 텐트 치듯 거미줄 망을 쳐놓고 그 안에서 우르르 함께 잎을 갉아먹어요, 7월과 9월 두 번씩이나!",
     illustration: `<svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px">
       <rect width="320" height="180" fill="#f0f8f0" rx="12"/>
       <!-- 나뭇가지 -->
@@ -191,6 +201,8 @@ const THEORIES = [
     title: "광합성 기초",
     summary: "나무가 어떻게 스스로 양분을 만드는지 기본 원리 이해하기",
     keywords: ["광합성", "이산화탄소", "산소", "엽록소", "포도당"],
+    acronym: "이-물-빛-포-산 (이산화탄소+물+빛 → 포도당+산소)",
+    mnemonic: "나무는 이산화탄소와 물을 햇빛으로 요리해서 포도당(밥)을 만들고, 산소는 트림처럼 슬쩍 내뱉어요!",
     illustration: `<svg viewBox="0 0 320 190" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px">
       <rect width="320" height="190" fill="#f0faf3" rx="12"/>
       <!-- 태양 -->
@@ -237,6 +249,8 @@ const THEORIES = [
     title: "토양 삼상 (고상·액상·기상)",
     summary: "토양이 3가지로 이루어진다는 기본 개념 - 비율도 함께 기억하기",
     keywords: ["토양삼상", "고상", "액상", "기상", "공극"],
+    acronym: "고-액-기 (고상50%·액상25%·기상25%)",
+    mnemonic: "토양은 절반이 흙 알갱이(고상)고, 나머지 절반을 물(액상)과 공기(기상)가 사이좋게 25%씩 나눠 가져요!",
     illustration: `<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px">
       <rect width="320" height="200" fill="#faf5e4" rx="12"/>
       <!-- 토양 단면 직사각형 -->
@@ -280,6 +294,8 @@ const THEORIES = [
     title: "헷갈리는 곰팡이병 3종 비교",
     summary: "흰가루병 vs 녹병 vs 그을음병 - 시험에 자주 나오는 비교 문제 완벽 정리",
     keywords: ["흰가루병", "녹병", "그을음병", "병징 비교", "발생 부위"],
+    acronym: "흰-녹-그 (흰가루는 하양, 녹병은 누렁, 그을음은 까망)",
+    mnemonic: "잎에 하얀 가루면 흰가루병, 누런 녹슨 자국이면 녹병, 까만 그을음이면 그을음병 — 색깔만 봐도 바로 구분돼요!",
     illustration: `<svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px">
       <rect width="340" height="200" fill="#f8f8f8" rx="12"/>
       <!-- 흰가루병 잎 -->
@@ -319,6 +335,8 @@ const THEORIES = [
     title: "불마름병 (화상병)",
     summary: "불에 탄 것처럼 가지가 검게 말라 죽는 장미과 수목의 세균병",
     keywords: ["불마름병", "화상병", "Erwinia amylovora", "장미과", "검역병"],
+    acronym: "불-장-갈 (불탄듯 검게 마르는 장미과, 갈고리모양)",
+    mnemonic: "불마름병 걸린 가지 끝은 목동의 지팡이처럼 훽 구부러지는데, 마치 불에 그을려 고통스럽게 웅크린 모습 같아요!",
     illustration: `<svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:300px">
       <rect width="300" height="180" fill="#fff5f5" rx="12"/>
       <!-- 나뭇가지 -->
@@ -352,6 +370,8 @@ const THEORIES = [
     title: "뿌리혹병 (근두암종병)",
     summary: "뿌리와 지제부에 혹이 생기는 세균병 - 병원균 이름과 원리 함께 기억하기",
     keywords: ["근두암종병", "Agrobacterium", "Ti 플라스미드", "혹", "장미"],
+    acronym: "아-티-혹 (아그로박테리움이 Ti플라스미드 주입해 혹)",
+    mnemonic: "아그로박테리움이 Ti 플라스미드라는 '유전자 택배'를 뿌리 세포에 몰래 넣으면, 세포가 미친 듯이 증식해서 혹처럼 부풀어요!",
     illustration: `<svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:300px">
       <rect width="300" height="180" fill="#faf5e4" rx="12"/>
       <!-- 지면 -->
@@ -386,6 +406,8 @@ const THEORIES = [
     title: "솔껍질깍지벌레",
     summary: "소나무 수피 밑에서 수액을 빨아먹는 깍지벌레 - 방제 시기가 핵심!",
     keywords: ["솔껍질깍지벌레", "흡즙", "수피", "소나무", "약충"],
+    acronym: "수-사오 (수피밑 흡즙, 4~5월이 방제 골든타임)",
+    mnemonic: "깍지벌레는 수피 이불 속에 숨어 수액을 빨아먹는데, 4~5월에 약충이 이불 밖으로 잠깐 나와 이동할 때가 유일한 공격 찬스예요!",
     illustration: `<svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:300px">
       <rect width="300" height="180" fill="#f5f0e8" rx="12"/>
       <!-- 소나무 줄기 단면 -->
@@ -423,6 +445,8 @@ const THEORIES = [
     title: "솔수염하늘소 (재선충 매개충)",
     summary: "소나무재선충을 전파하는 핵심 매개충 - 생활사와 전파 메커니즘 완벽 이해",
     keywords: ["솔수염하늘소", "재선충 매개", "후식", "우화", "6~8월"],
+    acronym: "우-후-전 (우화-후식-전파 순서로 재선충 옮김)",
+    mnemonic: "6~8월 우화한 하늘소가 신초를 아삭아삭 후식하는 그 순간, 몸속 재선충이 슬쩍 갈아타면서 나무는 사형선고를 받아요!",
     content: `<div class="theory-section"><h4>핵심 역할</h4><p><strong>소나무재선충의 주요 매개충</strong>이에요. 재선충이 이 곤충을 통해서만 건강한 나무에 전파돼요.</p></div>
     <div class="theory-section"><h4>재선충 전파 메커니즘</h4><ol style="padding-left:18px;font-size:14px;line-height:2;color:#40514e"><li>고사목에서 번데기로 있을 때 재선충이 몸속으로 침입</li><li>6~8월 성충으로 우화(탈출)</li><li>건강한 소나무 신초를 갉아먹는 <strong>후식</strong> 행동 시 재선충 전파</li><li>재선충 감염 → 소나무 고사</li><li>고사목에 산란 → 유충이 목질부 가해 → 번데기</li></ol></div>
     <div class="theory-section"><h4>생활사 (시험 포인트)</h4><table class="compare-table"><tr><th>시기</th><th>상태</th><th>행동</th></tr><tr><td>가을~봄</td><td>유충</td><td>목질부 내부 가해</td></tr><tr><td>봄~여름</td><td>번데기</td><td>재선충 침입</td></tr><tr><td>6~8월</td><td>성충</td><td>우화·후식·전파</td></tr></table></div>
@@ -434,6 +458,8 @@ const THEORIES = [
     title: "수분 이동과 증산작용",
     summary: "뿌리에서 잎까지 물이 올라가는 원리와 기공의 역할",
     keywords: ["증산작용", "삼투압", "수분퍼텐셜", "응집력-장력설", "기공"],
+    acronym: "응-장-증 (응집력·장력설의 엔진은 증산)",
+    mnemonic: "물 분자들이 서로 손잡고(응집력) 사슬처럼 이어져 있는데, 잎에서 증산이 잡아당기면 사슬 전체가 줄줄이 끌려 올라와요!",
     illustration: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:300px">
       <rect width="300" height="200" fill="#e8f4fd" rx="12"/>
       <!-- 나무 전체 -->
@@ -471,6 +497,8 @@ const THEORIES = [
     title: "토양 pH와 영양소",
     summary: "토양 산도에 따른 영양소 가용성 변화와 결핍 증상",
     keywords: ["pH", "산성 토양", "알칼리성", "질소", "인산", "칼륨", "결핍"],
+    acronym: "질-인-칼-철 (질소·인산·칼륨은 하위엽, 철은 신엽 결핍)",
+    mnemonic: "질소·칼륨은 몸값 아까워서(이동성 높음) 늙은 잎부터 버리고, 철분은 반대로 이동을 못해서 어린잎부터 노랗게 SOS를 보내요!",
     content: `<div class="theory-section"><h4>수목 적합 pH</h4><ul><li>대부분 수목: <strong>pH 5.5~6.5</strong> 적합</li><li>산성 강하면 (pH 4 이하): Al, Mn 독성 증가</li><li>알칼리성: Fe, Mn, Cu, Zn 불용화 → 결핍</li></ul></div>
     <div class="theory-section"><h4>3대 필수 영양소 (NPK)</h4><table class="compare-table"><tr><th>원소</th><th>역할</th><th>결핍 증상</th><th>특징</th></tr><tr><td>질소 (N)</td><td>단백질·엽록소 합성</td><td>잎 황화 (하위엽부터)</td><td>이동성 높음</td></tr><tr><td>인산 (P)</td><td>에너지 대사·뿌리</td><td>자색~적자색 (하위엽)</td><td>이동성 보통</td></tr><tr><td>칼륨 (K)</td><td>삼투조절·효소</td><td>잎 가장자리 황화·갈변</td><td>이동성 높음</td></tr></table></div>
     <div class="theory-section"><h4>미량원소 결핍 증상</h4><ul><li>철 (Fe): 신엽(어린잎)부터 황화 → pH 높을 때 주로 발생</li><li>마그네슘 (Mg): 잎맥 사이 황화, 오래된 잎부터</li><li>칼슘 (Ca): 신엽 끝부터 갈변</li></ul></div>`,
@@ -481,6 +509,8 @@ const THEORIES = [
     title: "수목 이식 방법",
     summary: "뿌리돌림부터 식재 후 관리까지 이식의 전 과정",
     keywords: ["이식", "뿌리돌림", "굴취", "뿌리분", "활착"],
+    acronym: "돌-굴-운-식-사 (뿌리돌림-굴취-운반-식재-사후관리)",
+    mnemonic: "이사가는 나무도 사람처럼 순서가 있어요. 짐 정리하듯 뿌리돌림하고, 캐내고(굴취), 옮기고(운반), 새집에 심고(식재), 정성껏 돌봐요(사후관리)!",
     content: `<div class="theory-section"><h4>이식 순서</h4><p>뿌리돌림 → 굴취 → 운반 → 식재 → 사후관리</p></div>
     <div class="theory-section"><h4>뿌리돌림</h4><ul><li>이식 <strong>1~3년 전</strong> 실시</li><li>목적: 세근(잔뿌리) 발달 유도</li><li>굵은 뿌리는 절단, 가는 뿌리는 보존</li></ul></div>
     <div class="theory-section"><h4>뿌리분 크기</h4><p>직경 = 근원직경의 <strong>4~6배</strong></p></div>
@@ -496,6 +526,8 @@ const THEORIES = [
     title: "유사 병징 감별법 (종합)",
     summary: "시험에서 헷갈리는 병징들을 정확히 구분하는 고급 감별 포인트",
     keywords: ["유사 병징", "감별", "진단 포인트", "비교"],
+    acronym: "흰-녹-그-점-탄 (흰가루·녹병·그을음·점무늬·탄저, 색으로 구분)",
+    mnemonic: "다섯 병 모두 잎에 무늬가 생기지만 색이 다 달라요. 하양-누렁-까망-갈색-동그란 갈색고리, 색깔만 봐도 병명이 보여요!",
     content: `<div class="theory-section"><h4>잎에 반점이 생기는 병 비교</h4><table class="compare-table"><tr><th>병명</th><th>반점 색</th><th>위치</th><th>핵심 키워드</th></tr><tr><td>흰가루병</td><td>흰색 분말</td><td>잎 표면</td><td>건조, 자낭균</td></tr><tr><td>녹병</td><td>황색~녹슨색</td><td>잎 뒷면 주로</td><td>중간기주, 담자균</td></tr><tr><td>그을음병</td><td>검은색</td><td>잎 표면</td><td>해충 배설물</td></tr><tr><td>점무늬병류</td><td>갈색~황갈색</td><td>잎 어디든</td><td>황색 운무, 낙엽</td></tr><tr><td>탄저병</td><td>갈색, 동심원</td><td>잎 끝·가장자리</td><td>동심원, 고온다습</td></tr></table></div>
     <div class="theory-section"><h4>줄기/가지 피해 비교</h4><table class="compare-table"><tr><th>증상</th><th>병명/원인</th><th>핵심</th></tr><tr><td>가지가 불에 탄 듯 검게 마름</td><td>불마름병</td><td>세균, 장미과</td></tr><tr><td>수피에 수지 흘러내림</td><td>수지병·피목지의고병</td><td>곰팡이</td></tr><tr><td>줄기에 흰 분비물</td><td>깍지벌레 피해</td><td>해충</td></tr><tr><td>줄기 구멍+톱밥</td><td>천공해충 피해</td><td>하늘소류</td></tr></table></div>
     <div class="theory-section"><h4>뿌리 피해 비교</h4><table class="compare-table"><tr><th>증상</th><th>원인</th></tr><tr><td>뿌리에 혹 형성</td><td>뿌리혹병 (세균)</td></tr><tr><td>뿌리 썩음, 흰 균사</td><td>리지나뿌리썩음병 (곰팡이)</td></tr><tr><td>뿌리 피층 썩음</td><td>역병 (Phytophthora)</td></tr></table></div>`,
@@ -506,6 +538,8 @@ const THEORIES = [
     title: "양수와 음수의 광합성 특성",
     summary: "광보상점·광포화점으로 양수와 음수를 구분하고 생태적 의미 이해하기",
     keywords: ["광보상점", "광포화점", "양수", "음수", "광합성 효율"],
+    acronym: "양높-음낮 (양수는 보상점·포화점 둘 다 높고, 음수는 낮다)",
+    mnemonic: "양수는 햇빛 욕심쟁이라 밝아야만 만족하고, 음수는 소식가라서 그늘에서도 적게 먹고 잘 살아요!",
     illustration: `<svg viewBox="0 0 340 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px">
       <rect width="340" height="210" fill="#f0faf3" rx="12"/>
       <text x="170" y="20" text-anchor="middle" font-size="12" fill="#2d6a4f" font-weight="bold" font-family="sans-serif">광합성-광도 반응 곡선</text>
@@ -546,6 +580,8 @@ const THEORIES = [
     title: "전정의 종류와 시기 (심화)",
     summary: "전정 방법별 차이와 수종별 적정 시기 - 고급 문제 대비",
     keywords: ["솎음 전정", "절단 전정", "강전정", "낙엽수", "상록수", "개화 수종"],
+    acronym: "솎-절-강 (솎음전정-절단전정-강전정 순으로 세게)",
+    mnemonic: "솎음은 가지를 통째로 뽑아 자연스럽게, 절단은 중간을 싹둑 잘라 새 가지(도장지)를 부르고, 강전정은 화끈하게 확 밀어버려요!",
     content: `<div class="theory-section"><h4>전정 방법 비교</h4><table class="compare-table"><tr><th>방법</th><th>내용</th><th>효과</th><th>주의</th></tr><tr><td>솎음 전정</td><td>분기점에서 통째로 제거</td><td>자연스러운 수형 유지</td><td>큰 상처 남음</td></tr><tr><td>절단 전정</td><td>가지 중간을 자름</td><td>도장지 발생 촉진</td><td>도장지 처리 필요</td></tr><tr><td>강전정</td><td>굵은 가지까지 대폭 제거</td><td>수형 재구성</td><td>수세 약한 나무엔 금물</td></tr></table></div>
     <div class="theory-section"><h4>수종별 전정 시기</h4><table class="compare-table"><tr><th>구분</th><th>적기</th><th>이유</th></tr><tr><td>낙엽수 일반</td><td>낙엽 후~이른 봄</td><td>저장 양분 유지, 수형 확인 용이</td></tr><tr><td>개화 수종 (봄꽃)</td><td>꽃 진 직후</td><td>이듬해 꽃눈 보호</td></tr><tr><td>상록수</td><td>6월 신초 후, 또는 가을</td><td>생장 안정 시기</td></tr><tr><td>수액 이동 왕성기</td><td>피해야 함</td><td>과다 수액 손실</td></tr></table></div>
     <div class="theory-section"><h4>전정 상처 처리</h4><ul><li>굵은 가지 절단 후 도포제 처리 (병원균 침입 방지)</li><li>절단면은 수직보다 약간 경사지게 (빗물 배수)</li><li>전정 도구 소독 필수 (불마름병 등 전파 방지)</li></ul></div>`,
@@ -556,6 +592,8 @@ const THEORIES = [
     title: "토양 입자와 토성 (심화)",
     summary: "토양 입자 크기 기준과 토성에 따른 수목 생육 특성 차이",
     keywords: ["토성", "모래", "미사", "점토", "양토", "사양토", "공극률"],
+    acronym: "자-모-미-점 (자갈>모래>미사>점토, 작아질수록 배수 나쁨)",
+    mnemonic: "자갈-모래-미사-점토는 콩-쌀-밀가루-분필가루처럼 점점 고와지는데, 고울수록 물을 꽉 붙잡고 안 놔줘요!",
     content: `<div class="theory-section"><h4>토양 입자 크기 (국제기준 암기!)</h4><table class="compare-table"><tr><th>구분</th><th>직경</th><th>특성</th></tr><tr><td>자갈</td><td>2mm 이상</td><td>공극 큼, 보수력 낮음</td></tr><tr><td>모래 (조~세)</td><td>0.02~2mm</td><td>배수 좋음, 보비력 낮음</td></tr><tr><td>미사 (실트)</td><td>0.002~0.02mm</td><td>중간 특성</td></tr><tr><td>점토</td><td>0.002mm 이하</td><td>보수·보비력 높음, 배수 나쁨</td></tr></table></div>
     <div class="theory-section"><h4>토성과 수목 생육</h4><table class="compare-table"><tr><th>토성</th><th>특성</th><th>수목 생육</th></tr><tr><td>사토(모래 많음)</td><td>배수 극히 양호, 보수력 낮음</td><td>건조 피해 우려</td></tr><tr><td>양토·사양토</td><td>균형잡힌 물리성</td><td>최적</td></tr><tr><td>식토(점토 많음)</td><td>배수 불량, 보수력 과다</td><td>뿌리 호흡 장해</td></tr></table></div>
     <div class="theory-section"><h4>이상적 산림 토양</h4><ul><li>토성: 양토~사양토</li><li>공극률: 50% 이상</li><li>pH: 5.5~6.5</li><li>유기물: 풍부 (부식층 발달)</li><li>배수: 양호하면서도 적당한 보수력</li></ul></div>`,
@@ -566,6 +604,8 @@ const THEORIES = [
     title: "수목 진단 절차와 방제 전략",
     summary: "현장에서 수목 피해를 진단하는 체계적 절차와 방제 방법 선택 기준",
     keywords: ["수목 진단", "병력 조사", "생물적 방제", "화학적 방제", "물리적 방제"],
+    acronym: "문-육-상-토-실-방 (문진-육안-상세관찰-토양조사-실험실-방제계획)",
+    mnemonic: "의사가 문진하듯 나무 상태를 묻고, 눈으로 훑고, 돋보기로 자세히 보고, 흙까지 파본 다음에야 진짜 처방(방제)을 내려요!",
     content: `<div class="theory-section"><h4>수목 진단 절차</h4><ol style="padding-left:18px;font-size:14px;line-height:2;color:#40514e"><li><strong>문진</strong>: 언제부터, 어떤 변화가 있었나 (병력 조사)</li><li><strong>육안 진단</strong>: 전체적 수형·색깔·잎 상태 관찰</li><li><strong>상세 관찰</strong>: 병징·충해 흔적 확인 (루페 활용)</li><li><strong>토양 조사</strong>: pH, 배수, 뿌리 상태 확인</li><li><strong>실험실 진단</strong>: 병원균 분리 동정, PCR 검사</li><li><strong>방제 계획 수립</strong></li></ol></div>
     <div class="theory-section"><h4>방제 방법 비교</h4><table class="compare-table"><tr><th>방제법</th><th>내용</th><th>장점</th><th>단점</th></tr><tr><td>화학적 방제</td><td>살균·살충제 살포</td><td>빠른 효과, 광범위</td><td>저항성, 환경오염</td></tr><tr><td>생물적 방제</td><td>천적·미생물 이용</td><td>친환경, 지속성</td><td>효과 느림, 조건 까다로움</td></tr><tr><td>물리적 방제</td><td>포살·차단·열처리</td><td>약제 불필요</td><td>대규모 적용 어려움</td></tr><tr><td>임업적 방제</td><td>건강한 숲 조성</td><td>근본적 예방</td><td>장기간 필요</td></tr></table></div>
     <div class="theory-section"><h4>IPM (종합적 병해충 관리)</h4><p>여러 방제 방법을 통합하여 경제적 피해 수준 이하로 병해충을 관리하는 현대적 접근법. 화학적 방제는 최후 수단으로 사용.</p></div>`,

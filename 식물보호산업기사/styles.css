@@ -246,6 +246,52 @@ main { max-width: 900px; margin: 0 auto; padding: 28px 24px 80px; }
   padding: 14px 16px; margin-bottom: 20px; font-size: 13px; line-height: 1.7; color: #92400e;
 }
 .mnemonic-box strong { color: #b45309; }
+.acronym-box {
+  background: #f5f3ff; border: 2px dashed #8b5cf6; border-radius: var(--radius-sm);
+  padding: 14px 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.7; color: #5b21b6;
+}
+.acronym-box strong { color: #6d28d9; }
+
+/* ══════════════════════════════════
+   암기 카드 (플래시카드)
+══════════════════════════════════ */
+.flashcard-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 8px 0 20px; }
+.flashcard-progress { font-size: 12px; color: var(--text-light); font-weight: 700; }
+.flashcard { width: 100%; max-width: 480px; height: 280px; perspective: 1200px; cursor: pointer; }
+.flashcard-inner {
+  position: relative; width: 100%; height: 100%; transition: transform .5s;
+  transform-style: preserve-3d;
+}
+.flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+.flashcard-front, .flashcard-back {
+  position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: var(--radius); box-shadow: var(--shadow); padding: 26px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+  border: 1px solid #e5e7eb;
+}
+.flashcard-front { background: var(--white); gap: 10px; }
+.flashcard-back {
+  background: var(--green-bg); transform: rotateY(180deg); overflow-y: auto;
+  align-items: flex-start; text-align: left; gap: 4px;
+}
+.flashcard-title { font-size: 19px; font-weight: 900; color: var(--text-dark); line-height: 1.4; }
+.flashcard-hint { font-size: 11px; color: var(--text-light); margin-top: 8px; }
+.flashcard-back .acronym-line, .flashcard-back .mnemonic-line {
+  font-size: 13px; line-height: 1.65; margin-bottom: 10px; color: var(--text-mid);
+}
+.flashcard-back .acronym-line strong { color: #6d28d9; }
+.flashcard-back .mnemonic-line strong { color: #b45309; }
+.flashcard-controls { display: flex; gap: 10px; align-items: center; }
+.flashcard-nav-btn {
+  padding: 10px 18px; border-radius: var(--radius-sm); border: none;
+  background: var(--green-pale); color: var(--green-dark); font-weight: 700; font-size: 13px; cursor: pointer;
+}
+.flashcard-shuffle-btn {
+  padding: 10px 14px; border-radius: var(--radius-sm); border: none;
+  background: var(--green-dark); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer;
+}
+.flashcard-nav-btn:hover, .flashcard-shuffle-btn:hover { opacity: .88; }
+.flashcard-empty { text-align: center; color: var(--text-light); padding: 40px 0; font-size: 13px; }
 .theory-card-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 5px; }
 .level-tag {
   font-size: 10px;

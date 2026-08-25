@@ -18,6 +18,7 @@
   <nav>
     <button data-page="home" class="active">🏠 홈</button>
     <button data-page="theory">📖 이론</button>
+    <button data-page="flashcard">🎴 암기카드</button>
     <button data-page="quiz">📝 문제풀이</button>
     <button data-page="wrong">❌ 오답노트</button>
     <a href="기출모음.html">🔒 기출모음</a>
@@ -61,6 +62,14 @@
       <div class="theory-list" id="theory-list"></div>
     </div>
     <div id="theory-detail-view" style="display:none"></div>
+  </div>
+
+  <!-- ══ 암기카드 ══ -->
+  <div id="page-flashcard" class="page">
+    <div class="section-title">🎴 암기 카드</div>
+    <p style="font-size:12px;color:var(--text-light);margin-bottom:14px">카드를 탭하면 두문자·연상 암기법이 나와요. 넘기면서 빠르게 훑어보세요!</p>
+    <div class="filter-bar" id="flashcard-filter-bar"></div>
+    <div id="flashcard-area"></div>
   </div>
 
   <!-- ══ 문제풀이 ══ -->

@@ -470,12 +470,87 @@ function viewTheory(id) {
         <button id="detail-bookmark-btn" class="bookmark-toggle-btn" onclick="toggleBookmark('${t.id}')">${marked ? '⭐ 즐겨찾기 해제' : '☆ 즐겨찾기 추가'}</button>
       </div>
       <div class="theory-detail-title">${t.title}</div>
-      ${t.mnemonic ? `<div class="mnemonic-box">💡 <strong>암기 꿀팁</strong><br>${t.mnemonic}</div>` : ''}
+      ${t.acronym ? `<div class="acronym-box">🔤 <strong>두문자 암기</strong><br>${t.acronym}</div>` : ''}
+      ${t.mnemonic ? `<div class="mnemonic-box">💡 <strong>연상 암기</strong><br>${t.mnemonic}</div>` : ''}
       ${t.illustration ? `<div class="illustration-wrap">${t.illustration}</div>` : ''}
       ${t.content}
       ${relQ.length > 0 ? `<button class="related-quiz-btn" onclick="startRelatedQuiz('${id}')">📝 관련 문제 ${relQ.length}개 풀기</button>` : ''}
     </div>`;
   window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════════
+// 암기 카드 (플래시카드)
+// ══════════════════════════════════════════════
+let flashcardState = { level: '전체', pool: [], index: 0, flipped: false };
+
+function renderFlashcardPage() {
+  const bar = document.getElementById('flashcard-filter-bar');
+  const levels = ['전체', '초급', '중급', '고급'];
+  bar.innerHTML = levels.map(l => `<button class="filter-btn ${flashcardState.level === l ? 'active' : ''}" onclick="setFlashcardFilter('${l}')">${l}</button>`).join('');
+  buildFlashcardPool();
+  renderFlashcardCard();
+}
+function setFlashcardFilter(level) {
+  flashcardState.level = level;
+  flashcardState.index = 0;
+  flashcardState.flipped = false;
+  renderFlashcardPage();
+}
+function buildFlashcardPool() {
+  const src = flashcardState.level === '전체' ? THEORIES : THEORIES.filter(t => t.level === flashcardState.level);
+  flashcardState.pool = src;
+  if (flashcardState.index >= src.length) flashcardState.index = 0;
+}
+function renderFlashcardCard() {
+  const area = document.getElementById('flashcard-area');
+  const pool = flashcardState.pool;
+  if (!pool.length) { area.innerHTML = '<div class="flashcard-empty">이 단계에는 카드가 없어요.</div>'; return; }
+  const t = pool[flashcardState.index];
+  area.innerHTML = `
+    <div class="flashcard-wrap">
+      <div class="flashcard-progress">${flashcardState.index + 1} / ${pool.length} · ${subjectIcon(t.subject)} ${t.subject}</div>
+      <div class="flashcard ${flashcardState.flipped ? 'flipped' : ''}" onclick="flipFlashcard()">
+        <div class="flashcard-inner">
+          <div class="flashcard-front">
+            <span class="level-tag ${t.level}">${t.level}</span>
+            <div class="flashcard-title">${t.title}</div>
+            <div class="flashcard-hint">👆 탭해서 암기법 보기</div>
+          </div>
+          <div class="flashcard-back">
+            <div class="flashcard-title" style="font-size:14px;margin-bottom:10px">${t.title}</div>
+            ${t.acronym ? `<div class="acronym-line">🔤 <strong>두문자 암기</strong><br>${t.acronym}</div>` : ''}
+            ${t.mnemonic ? `<div class="mnemonic-line">💡 <strong>연상 암기</strong><br>${t.mnemonic}</div>` : ''}
+            <div class="flashcard-hint">👆 다시 탭해서 앞면으로</div>
+          </div>
+        </div>
+      </div>
+      <div class="flashcard-controls">
+        <button class="flashcard-nav-btn" onclick="event.stopPropagation();prevFlashcard()">← 이전</button>
+        <button class="flashcard-shuffle-btn" onclick="event.stopPropagation();shuffleFlashcards()">🔀 섞기</button>
+        <button class="flashcard-nav-btn" onclick="event.stopPropagation();nextFlashcard()">다음 →</button>
+      </div>
+    </div>`;
+}
+function flipFlashcard() {
+  flashcardState.flipped = !flashcardState.flipped;
+  renderFlashcardCard();
+}
+function nextFlashcard() {
+  flashcardState.index = (flashcardState.index + 1) % flashcardState.pool.length;
+  flashcardState.flipped = false;
+  renderFlashcardCard();
+}
+function prevFlashcard() {
+  flashcardState.index = (flashcardState.index - 1 + flashcardState.pool.length) % flashcardState.pool.length;
+  flashcardState.flipped = false;
+  renderFlashcardCard();
+}
+function shuffleFlashcards() {
+  flashcardState.pool = shuffle(flashcardState.pool);
+  flashcardState.index = 0;
+  flashcardState.flipped = false;
+  renderFlashcardCard();
 }
 
 function closeTheoryDetail() {
@@ -854,6 +929,7 @@ document.addEventListener('DOMContentLoaded', () => {
       goTo(page);
       if (page === 'home') renderHome();
       if (page === 'theory') renderTheory();
+      if (page === 'flashcard') renderFlashcardPage();
       if (page === 'quiz') renderQuizSetup();
       if (page === 'wrong') renderWrongNote();
     });
