@@ -38,17 +38,32 @@
   .gate-submit:disabled { opacity: .6; cursor: default; }
   .gate-error { color: #dc2626; font-size: 12px; margin-top: 10px; min-height: 16px; }
 
-  .exam-toolbar { display:flex; gap:8px; align-items:center; margin-bottom: 16px; flex-wrap: wrap; }
+  .exam-toolbar { display:flex; gap:8px; align-items:center; margin-bottom: 12px; flex-wrap: wrap; }
   .exam-search { flex: 1; min-width: 160px; padding: 9px 12px; border: 2px solid var(--green-pale); border-radius: var(--radius-sm); font-size:13px; font-family:inherit; }
-  .logout-btn { background: var(--green-pale); color: var(--green-dark); border: none; border-radius: var(--radius-sm); padding: 9px 14px; font-size: 12px; font-weight:700; cursor:pointer; }
-  .set-group { margin-bottom: 22px; }
-  .set-title { font-size: 13px; font-weight: 800; color: var(--green-dark); margin-bottom: 8px; padding-left: 2px; }
+  .logout-btn, .toggle-all-btn { background: var(--green-pale); color: var(--green-dark); border: none; border-radius: var(--radius-sm); padding: 9px 14px; font-size: 12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+
+  .set-nav { display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 16px; }
+  .set-nav-btn { background: var(--white); color: var(--text-mid); border: 1px solid var(--green-pale); border-radius: 20px; padding: 6px 12px; font-size: 12px; font-weight:700; cursor:pointer; }
+  .set-nav-btn:hover { border-color: var(--green-mid); color: var(--green-dark); }
+
+  .set-group { margin-bottom: 12px; }
+  .set-title {
+    display:flex; align-items:center; justify-content:space-between; gap:8px; cursor:pointer; user-select:none;
+    font-size: 13px; font-weight: 800; color: var(--green-dark); padding: 12px 14px;
+    background: var(--white); border-radius: var(--radius-sm); box-shadow: var(--shadow);
+  }
+  .set-title .chevron { font-size: 11px; color: var(--text-light); transition: transform .15s; flex-shrink:0; }
+  .set-group.collapsed .set-title .chevron { transform: rotate(-90deg); }
+  .set-body { margin-top: 8px; }
+  .set-group.collapsed .set-body { display: none; }
+
   .qcard { background: var(--white); border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 10px; border-left: 4px solid var(--green-light); }
   .qcard-no { font-size: 11px; font-weight: 800; color: var(--green-mid); margin-bottom: 4px; }
   .qcard-q { font-size: 14px; color: var(--text-dark); line-height:1.55; margin-bottom: 8px; white-space: pre-wrap; }
   .qcard-toggle { font-size: 12px; color: var(--green-dark); font-weight:700; cursor: pointer; user-select: none; }
   .qcard-a { display:none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--green-pale); font-size: 13px; color: var(--text-mid); line-height:1.55; white-space: pre-wrap; }
   .qcard.open .qcard-a { display: block; }
+  .qcard-a .quiz-mnemonic-hint { margin-top: 10px; white-space: normal; }
   .loading-msg, .empty-msg { text-align:center; color: var(--text-light); font-size: 13px; padding: 40px 0; }
 </style>
 </head>
@@ -81,8 +96,10 @@
   <div id="content" style="display:none">
     <div class="exam-toolbar">
       <input type="text" class="exam-search" id="search" placeholder="문제 내용 검색...">
+      <button class="toggle-all-btn" id="toggle-all-btn">전체 펼치기</button>
       <button class="logout-btn" id="logout-btn">로그아웃</button>
     </div>
+    <div class="set-nav" id="set-nav"></div>
     <div id="list"><div class="loading-msg">불러오는 중...</div></div>
   </div>
 </main>
@@ -100,6 +117,8 @@ const content = document.getElementById('content');
 const gateError = document.getElementById('gate-error');
 const submitBtn = document.getElementById('gate-submit');
 let allRows = [];
+let allTheories = [];
+const openSets = new Set(); // sid들 중 펼쳐진 것
 
 async function showApp() {
   gate.style.display = 'none';
@@ -108,18 +127,60 @@ async function showApp() {
 }
 
 async function loadQuestions() {
-  const { data, error } = await supabase
-    .from('moducbt_questions')
-    .select('*')
-    .order('source_id', { ascending: true })
-    .order('problem_no', { ascending: true });
+  const [qRes, tRes] = await Promise.all([
+    supabase.from('moducbt_questions').select('*')
+      .order('source_id', { ascending: true }).order('problem_no', { ascending: true }),
+    supabase.from('cert_theories').select('id,title,keywords,acronym,mnemonic').eq('module', '식물보호산업기사')
+  ]);
 
-  if (error) {
-    document.getElementById('list').innerHTML = `<div class="empty-msg">불러오기 실패: ${error.message}</div>`;
+  if (qRes.error) {
+    document.getElementById('list').innerHTML = `<div class="empty-msg">불러오기 실패: ${qRes.error.message}</div>`;
     return;
   }
-  allRows = data || [];
+  allRows = qRes.data || [];
+  allTheories = tRes.data || [];
+  renderSetNav();
   render(allRows);
+}
+
+function findRelatedTheory(r) {
+  const text = `${r.question} ${r.answer}`;
+  let best = null, bestScore = 0;
+  allTheories.forEach(t => {
+    let score = 0;
+    (t.keywords || []).forEach(k => { if (k && text.includes(k)) score++; });
+    if (score > bestScore) { bestScore = score; best = t; }
+  });
+  return bestScore > 0 ? best : null;
+}
+
+function renderSetNav() {
+  const groups = {};
+  allRows.forEach(r => { (groups[r.source_id] = groups[r.source_id] || []).push(r); });
+  const sids = sortSids(Object.keys(groups));
+  const nav = document.getElementById('set-nav');
+  nav.innerHTML = sids.map(sid => {
+    const label = SET_LABELS[sid] || sid;
+    return `<button class="set-nav-btn" data-sid="${sid}">${label}</button>`;
+  }).join('');
+  nav.querySelectorAll('.set-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sid = btn.dataset.sid;
+      openSets.add(sid);
+      render(allRows);
+      document.getElementById(`set-${sid}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+function sortSids(sids) {
+  return sids.slice().sort((a, b) => {
+    const la = SET_LABELS[a], lb = SET_LABELS[b];
+    if (la && lb) return la.localeCompare(lb, 'ko');
+    if (la) return -1;
+    if (lb) return 1;
+    return 0;
+  });
 }
 
 const SET_LABELS = {
@@ -134,7 +195,7 @@ const SET_LABELS = {
   '13462': '2025년 3회'
 };
 
-function render(rows) {
+function render(rows, searching = false) {
   const list = document.getElementById('list');
   if (!rows.length) {
     list.innerHTML = '<div class="empty-msg">검색 결과가 없어요.</div>';
@@ -145,28 +206,41 @@ function render(rows) {
     (groups[r.source_id] = groups[r.source_id] || []).push(r);
   });
   let html = '';
-  const sortedSids = Object.keys(groups).sort((a, b) => {
-    const la = SET_LABELS[a], lb = SET_LABELS[b];
-    if (la && lb) return la.localeCompare(lb, 'ko');
-    if (la) return -1;
-    if (lb) return 1;
-    return 0;
-  });
+  const sortedSids = sortSids(Object.keys(groups));
   sortedSids.forEach((sid, idx) => {
     const label = SET_LABELS[sid] || `기출 세트 ${idx + 1}`;
-    html += `<div class="set-group"><div class="set-title">📄 ${label} 기출복원문제 (${groups[sid].length}문항)</div>`;
+    const isOpen = searching || openSets.has(sid);
+    html += `<div class="set-group${isOpen ? '' : ' collapsed'}" id="set-${sid}">
+      <div class="set-title" data-sid="${sid}">
+        <span>📄 ${label} 기출복원문제 (${groups[sid].length}문항)</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="set-body">`;
     groups[sid].forEach(r => {
+      const t = findRelatedTheory(r);
+      const hintHtml = t && (t.acronym || t.mnemonic) ? `
+        <div class="quiz-mnemonic-hint">
+          ${t.acronym ? `<div class="acronym-box">🔤 <strong>두문자 암기</strong><br>${escapeHtml(t.acronym)}</div>` : ''}
+          ${t.mnemonic ? `<div class="mnemonic-box">💡 <strong>연상 암기</strong><br>${escapeHtml(t.mnemonic)}</div>` : ''}
+        </div>` : '';
       html += `
         <div class="qcard">
           <div class="qcard-no">문제 ${r.problem_no}</div>
           <div class="qcard-q">${escapeHtml(r.question)}</div>
           <div class="qcard-toggle" onclick="this.parentElement.classList.toggle('open')">정답 보기 ▾</div>
-          <div class="qcard-a">${escapeHtml(r.answer)}</div>
+          <div class="qcard-a">${escapeHtml(r.answer)}${hintHtml}</div>
         </div>`;
     });
-    html += `</div>`;
+    html += `</div></div>`;
   });
   list.innerHTML = html;
+  list.querySelectorAll('.set-title').forEach(el => {
+    el.addEventListener('click', () => {
+      const sid = el.dataset.sid;
+      if (openSets.has(sid)) openSets.delete(sid); else openSets.add(sid);
+      el.closest('.set-group').classList.toggle('collapsed');
+    });
+  });
 }
 
 function escapeHtml(s) {
@@ -176,12 +250,24 @@ function escapeHtml(s) {
 document.getElementById('search').addEventListener('input', (e) => {
   const q = e.target.value.trim();
   if (!q) { render(allRows); return; }
-  render(allRows.filter(r => r.question.includes(q) || r.answer.includes(q)));
+  render(allRows.filter(r => r.question.includes(q) || r.answer.includes(q)), true);
 });
 
 document.getElementById('logout-btn').addEventListener('click', async () => {
   await supabase.auth.signOut();
   location.reload();
+});
+
+const toggleAllBtn = document.getElementById('toggle-all-btn');
+toggleAllBtn.addEventListener('click', () => {
+  const groups = {};
+  allRows.forEach(r => { (groups[r.source_id] = groups[r.source_id] || []).push(r); });
+  const sids = Object.keys(groups);
+  const allOpen = sids.every(sid => openSets.has(sid));
+  if (allOpen) { openSets.clear(); toggleAllBtn.textContent = '전체 펼치기'; }
+  else { sids.forEach(sid => openSets.add(sid)); toggleAllBtn.textContent = '전체 접기'; }
+  const q = document.getElementById('search').value.trim();
+  render(q ? allRows.filter(r => r.question.includes(q) || r.answer.includes(q)) : allRows, !!q);
 });
 
 submitBtn.addEventListener('click', doLogin);
