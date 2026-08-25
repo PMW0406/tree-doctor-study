@@ -193,6 +193,34 @@ main { max-width: 900px; margin: 0 auto; padding: 28px 24px 80px; }
 .review-card-btn:hover { background: #d97706; }
 
 /* ══════════════════════════════════
+   학습 관리 (D-day · 스트릭 · 백업)
+══════════════════════════════════ */
+.manage-card {
+  display: flex; gap: 0; background: var(--white); border: 1px solid #e5e7eb;
+  border-radius: var(--radius); margin-bottom: 20px; overflow: hidden;
+}
+.manage-col {
+  flex: 1; padding: 16px 14px; text-align: center; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  border-right: 1px solid #f1f5f9;
+}
+.manage-col:last-child { border-right: none; }
+.dday-value { font-size: 22px; font-weight: 900; color: var(--green-dark); }
+.dday-label { font-size: 11px; color: var(--text-light); }
+.dday-empty { font-size: 11px; color: var(--text-light); line-height: 1.5; }
+.streak-value { font-size: 22px; font-weight: 900; color: #d97706; }
+.manage-mini-btn {
+  background: var(--green-pale); color: var(--green-dark); border: none; border-radius: 20px;
+  padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 2px;
+}
+.manage-mini-btn:hover { background: var(--green-dark); color: var(--white); }
+@media (max-width: 500px) {
+  .manage-card { flex-direction: column; }
+  .manage-col { border-right: none; border-bottom: 1px solid #f1f5f9; }
+  .manage-col:last-child { border-bottom: none; flex-direction: row; gap: 10px; }
+}
+
+/* ══════════════════════════════════
    THEORY
 ══════════════════════════════════ */
 .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }

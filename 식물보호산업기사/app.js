@@ -11,6 +11,87 @@ function loadBookmarks() { return JSON.parse(localStorage.getItem('plantIndustry
 function saveBookmarks(b) { localStorage.setItem('plantIndustryBookmarks', JSON.stringify(b)); }
 function isBookmarked(theoryId) { return loadBookmarks().includes(theoryId); }
 
+// ── D-day & 연속 학습일(스트릭) ──────────────────
+const EXAM_DATE_KEY = 'plantIndustryExamDate';
+const STUDY_DATES_KEY = 'plantIndustryStudyDates';
+function loadExamDate() { return localStorage.getItem(EXAM_DATE_KEY) || null; }
+function saveExamDate(d) { if (d) localStorage.setItem(EXAM_DATE_KEY, d); else localStorage.removeItem(EXAM_DATE_KEY); }
+function markStudyToday() {
+  const dates = JSON.parse(localStorage.getItem(STUDY_DATES_KEY) || '[]');
+  const today = todayISO();
+  if (!dates.includes(today)) {
+    dates.push(today);
+    localStorage.setItem(STUDY_DATES_KEY, JSON.stringify(dates));
+  }
+}
+function promptExamDate() {
+  const cur = loadExamDate();
+  const input = prompt('시험 날짜를 YYYY-MM-DD 형식으로 입력하세요 (예: 2026-11-13).\n지우려면 빈 칸으로 두고 확인을 누르세요.', cur || '');
+  if (input === null) return;
+  const trimmed = input.trim();
+  if (trimmed === '') { saveExamDate(null); renderHome(); return; }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) { showToast('YYYY-MM-DD 형식으로 입력해주세요 (예: 2026-11-13)'); return; }
+  saveExamDate(trimmed);
+  renderHome();
+}
+function computeStreak() {
+  const dates = new Set(JSON.parse(localStorage.getItem(STUDY_DATES_KEY) || '[]'));
+  const today = todayISO();
+  const cursor = new Date();
+  if (!dates.has(today)) cursor.setDate(cursor.getDate() - 1);
+  let streak = 0;
+  while (true) {
+    const iso = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`;
+    if (dates.has(iso)) { streak++; cursor.setDate(cursor.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
+// ── 진도 백업/복원 ────────────────────────────
+function exportProgressData() {
+  const data = {
+    site: '식물보호산업기사',
+    exportedAt: new Date().toISOString(),
+    progress: loadProgress(),
+    wrongNote: loadWrongNote(),
+    bookmarks: loadBookmarks(),
+    examDate: loadExamDate(),
+    studyDates: JSON.parse(localStorage.getItem(STUDY_DATES_KEY) || '[]')
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `식물보호산업기사_진도백업_${todayISO()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('진도를 파일로 내보냈어요 💾');
+}
+function importProgressData(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    let data;
+    try { data = JSON.parse(e.target.result); }
+    catch { showToast('파일을 읽을 수 없어요. 올바른 백업 파일인지 확인해주세요.'); return; }
+    if (!data || typeof data !== 'object' || !data.progress) {
+      showToast('올바른 백업 파일이 아니에요.');
+      return;
+    }
+    if (!confirm('현재 진도를 백업 파일 내용으로 덮어쓸까요? 되돌릴 수 없어요.')) return;
+    saveProgress(data.progress || loadProgress());
+    saveWrongNote(data.wrongNote || []);
+    saveBookmarks(data.bookmarks || []);
+    saveExamDate(data.examDate || null);
+    localStorage.setItem(STUDY_DATES_KEY, JSON.stringify(data.studyDates || []));
+    showToast('진도를 불러왔어요! ✅');
+    renderHome();
+  };
+  reader.readAsText(file);
+}
+
 // ── 에빙하우스 망각곡선 기반 SRS(간격 반복) ──────
 const SRS_INTERVALS = [1, 3, 7, 14, 30]; // 일 단위 복습 간격
 function todayISO() {
@@ -318,6 +399,35 @@ function renderHome() {
          </div>
        </div>`;
 
+  // D-day · 연속 학습일 · 진도 백업
+  const examDate = loadExamDate();
+  const streak = computeStreak();
+  let dDayHtml;
+  if (examDate) {
+    const diff = Math.ceil((new Date(examDate) - new Date(todayISO())) / 86400000);
+    dDayHtml = diff >= 0
+      ? `<div class="dday-value">D-${diff}</div><div class="dday-label">${examDate} 시험까지</div>`
+      : `<div class="dday-value">D+${Math.abs(diff)}</div><div class="dday-label">${examDate} 시험 이후</div>`;
+  } else {
+    dDayHtml = `<div class="dday-empty">시험일을 등록하면<br>남은 날짜를 보여드려요</div>`;
+  }
+  document.getElementById('study-manage-widget').innerHTML = `
+    <div class="manage-card">
+      <div class="manage-col">
+        ${dDayHtml}
+        <button class="manage-mini-btn" onclick="promptExamDate()">${examDate ? '변경' : '📅 시험일 등록'}</button>
+      </div>
+      <div class="manage-col">
+        <div class="streak-value">🔥 ${streak}일</div>
+        <div class="dday-label">연속 학습</div>
+      </div>
+      <div class="manage-col">
+        <button class="manage-mini-btn" onclick="exportProgressData()">💾 백업 내보내기</button>
+        <button class="manage-mini-btn" onclick="document.getElementById('import-file-input').click()">📂 백업 불러오기</button>
+      </div>
+    </div>
+  `;
+
   const grid = document.getElementById('stages-grid');
   const rows = levels.map(level => {
     const pct = stageCompletion(level);
@@ -447,6 +557,8 @@ function viewTheory(id) {
   const t = THEORIES.find(x => x.id === id);
   if (!t) return;
 
+  markStudyToday();
+
   // 읽음 표시
   const p = loadProgress();
   if (!p[t.level].read.includes(id)) {
@@ -534,6 +646,7 @@ function renderFlashcardCard() {
 }
 function flipFlashcard() {
   flashcardState.flipped = !flashcardState.flipped;
+  if (flashcardState.flipped) markStudyToday();
   renderFlashcardCard();
 }
 function nextFlashcard() {
@@ -696,6 +809,7 @@ function renderQuestion() {
 
 // 정답 기록 공통 처리 (객관식/OX/단답형 공용)
 function recordResult(q, isCorrect, selectedText, correctText) {
+  markStudyToday();
   const panel = document.getElementById('quiz-result-panel');
   panel.className = 'quiz-result-panel active ' + (isCorrect ? 'correct' : 'wrong');
   panel.innerHTML = `
@@ -936,6 +1050,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('quiz-next-btn').addEventListener('click', nextQuestion);
+  const importInput = document.getElementById('import-file-input');
+  if (importInput) {
+    importInput.addEventListener('change', (e) => {
+      if (e.target.files[0]) importProgressData(e.target.files[0]);
+      e.target.value = '';
+    });
+  }
   renderHome();
   goTo('home');
 });
