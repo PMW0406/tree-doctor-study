@@ -11,43 +11,31 @@
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <a href="../index.html" style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:600;text-decoration:none;margin-right:4px">← 홈</a>
-    <span class="logo">🌿</span>
-    <h1>식물보호기능사 합격노트</h1>
-  </div>
-</header>
-
-<nav>
-  <div class="nav-inner">
+<div class="app-shell">
+<aside class="sidebar">
+  <div class="sidebar-brand"><span class="logo">🌿</span><span class="name">식물보호기능사<br>합격노트</span></div>
+  <a class="sidebar-back" href="../index.html">← 전체 허브로</a>
+  <nav>
     <button data-page="home" class="active">🏠 홈</button>
     <button data-page="theory">📖 이론</button>
     <button data-page="quiz">📝 문제풀이</button>
     <button data-page="wrong">❌ 오답노트</button>
-  </div>
-</nav>
-
+  </nav>
+</aside>
+<div class="main-content">
 <main>
 
   <!-- ══ 홈 ══ -->
   <div id="page-home" class="page active">
-    <div class="home-hero">
-      <h2>식물보호기능사 합격노트 🌿</h2>
+    <div class="page-title-row">
+      <h2>식물보호기능사 합격노트</h2>
       <p>식물병리학 · 농업해충학 · 잡초방제학 · 농약학 — 초급부터 차근차근!</p>
-      <div class="total-progress-wrap">
-        <div class="total-progress-label">
-          <span>전체 진행률</span>
-          <span id="total-progress-pct">0%</span>
-        </div>
-        <div class="total-progress-bar">
-          <div class="total-progress-fill" id="total-progress-fill" style="width:0%"></div>
-        </div>
-      </div>
     </div>
 
+    <div class="stat-row" id="stat-row"></div>
+
     <div class="section-title">📚 단계별 학습 경로</div>
-    <div class="stages-grid" id="stages-grid"></div>
+    <div id="stages-grid"></div>
   </div>
 
   <!-- ══ 이론 ══ -->
@@ -168,6 +156,8 @@
   </div>
 
 </main>
+</div>
+</div>
 
 <div id="toast" class="toast"></div>
 

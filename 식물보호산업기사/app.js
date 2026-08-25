@@ -288,8 +288,15 @@ function renderHome() {
 
   // 전체 진행률
   const allPct = Math.round(levels.reduce((s, l) => s + stageCompletion(l), 0) / 3);
-  document.getElementById('total-progress-fill').style.width = allPct + '%';
-  document.getElementById('total-progress-pct').textContent = allPct + '%';
+  const totalTheoryAll = THEORIES.length;
+  const totalQAll = QUESTIONS.length;
+  const readAll = levels.reduce((s, l) => s + loadProgress()[l].read.length, 0);
+  const correctAll = levels.reduce((s, l) => s + loadProgress()[l].correct, 0);
+  document.getElementById('stat-row').innerHTML = `
+    <div class="stat-tile"><div class="stat-label">전체 진행률</div><div class="stat-value accent">${allPct}%</div></div>
+    <div class="stat-tile"><div class="stat-label">이론 학습</div><div class="stat-value">${readAll}<span style="font-size:14px;color:var(--text-light)">/${totalTheoryAll}</span></div></div>
+    <div class="stat-tile"><div class="stat-label">문제 정답</div><div class="stat-value">${correctAll}<span style="font-size:14px;color:var(--text-light)">/${totalQAll}</span></div></div>
+  `;
 
   // 오늘의 복습(에빙하우스 SRS) 위젯
   const dueCount = computeDueWrongNote().length;
@@ -312,46 +319,40 @@ function renderHome() {
        </div>`;
 
   const grid = document.getElementById('stages-grid');
-  grid.innerHTML = levels.map(level => {
+  const rows = levels.map(level => {
     const pct = stageCompletion(level);
     const unlocked = isStageUnlocked(level);
     const p = loadProgress()[level];
     const totalT = THEORIES.filter(t => t.level === level).length;
     const totalQ = QUESTIONS.filter(q => q.level === level).length;
-    const cls = classes[level];
+    const stageName = level === '초급' ? '산업기사 입문' : level === '중급' ? '핵심 개념 마스터' : '실전 완성';
 
     return `
-      <div class="stage-card ${cls} ${unlocked ? '' : 'locked'}">
-        <div class="stage-header">
-          <span class="stage-icon">${icons[level]}</span>
-          <div class="stage-info">
-            <span class="stage-badge">${level}</span>
-            <div class="stage-title">${level === '초급' ? '산업기사 입문' : level === '중급' ? '핵심 개념 마스터' : '실전 완성'}</div>
-            <div class="stage-desc">${subtitles[level]}</div>
-          </div>
-          ${unlocked ? '' : '<span class="stage-lock-icon">🔒</span>'}
-        </div>
-        <div class="stage-body">
-          <div class="stage-progress-bar">
-            <div class="stage-progress-fill" style="width:${pct}%"></div>
-          </div>
-          <div class="stage-stats">
-            <span>📖 이론 ${p.read.length}/${totalT}</span>
-            <span>📝 문제 ${p.total > 0 ? p.correct + '/' + Math.min(p.total, totalQ) : '0/' + totalQ}</span>
-            <span>✅ ${pct}% 완료</span>
-          </div>
-          <div class="stage-actions">
-            <button class="stage-btn primary-btn" onclick="startStageTheory('${level}')" ${unlocked ? '' : 'disabled'}>
-              📖 이론 학습
-            </button>
-            <button class="stage-btn secondary-btn" onclick="startStageQuiz('${level}')" ${unlocked ? '' : 'disabled'}>
-              📝 문제 풀기
-            </button>
-          </div>
-          ${!unlocked ? `<div class="unlock-hint">🔒 ${level === '중급' ? '초급' : '중급'} 60% 이상 완료 시 해제돼요</div>` : ''}
-        </div>
-      </div>`;
+      <tr class="${unlocked ? '' : 'locked'}">
+        <td>
+          <div class="stage-name-cell">${icons[level]} ${level}${unlocked ? '' : ' 🔒'}</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:2px">${stageName}</div>
+        </td>
+        <td>${p.read.length}/${totalT}</td>
+        <td>${p.total > 0 ? p.correct + '/' + Math.min(p.total, totalQ) : '0/' + totalQ}</td>
+        <td>
+          <span class="mini-bar"><span class="mini-bar-fill" style="width:${pct}%"></span></span>${pct}%
+        </td>
+        <td>
+          <button class="table-btn primary" onclick="startStageTheory('${level}')" ${unlocked ? '' : 'disabled'}>이론</button>
+          <button class="table-btn secondary" onclick="startStageQuiz('${level}')" ${unlocked ? '' : 'disabled'}>문제</button>
+          ${!unlocked ? `<div style="font-size:11px;color:var(--text-light);margin-top:4px">${level === '중급' ? '초급' : '중급'} 60% 이상 시 해제</div>` : ''}
+        </td>
+      </tr>`;
   }).join('');
+
+  grid.innerHTML = `
+    <div class="stage-table-wrap">
+      <table class="stage-table">
+        <thead><tr><th>단계</th><th>이론</th><th>문제</th><th>완료율</th><th>학습</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
 }
 
 function startStageTheory(level) {

@@ -12,61 +12,69 @@
     body {
       font-family: 'Noto Sans KR', sans-serif;
       min-height: 100vh;
-      background: linear-gradient(160deg, #1a2e1a 0%, #2d4a1e 40%, #3d5a2e 100%);
+      background: #f8fafc;
+      color: #1e293b;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 32px 16px;
+      padding: 48px 16px 64px;
     }
 
-    .hub-header { text-align: center; margin-bottom: 48px; }
-    .hub-emoji { font-size: 52px; display: block; margin-bottom: 12px; }
-    .hub-title { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 8px; }
-    .hub-sub { font-size: 14px; color: rgba(255,255,255,0.65); }
+    .hub-header { text-align: center; margin-bottom: 28px; }
+    .hub-emoji { font-size: 40px; display: block; margin-bottom: 10px; }
+    .hub-title { font-size: 22px; font-weight: 900; color: #1e293b; margin-bottom: 6px; }
+    .hub-sub { font-size: 13px; color: #94a3b8; }
 
-    .cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 1060px; }
+    .order-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 7px 16px;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+    .order-badge b { color: #1e293b; font-weight: 800; }
+
+    .cards { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; max-width: 1080px; margin-bottom: 40px; }
 
     .exam-card {
-      background: rgba(255,255,255,0.07);
-      border: 2px solid rgba(255,255,255,0.15);
-      border-radius: 20px;
-      padding: 36px 32px 28px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-top: 3px solid var(--accent);
+      border-radius: 14px;
+      padding: 26px 24px 22px;
       width: 320px;
       text-decoration: none;
-      transition: all .25s;
-      backdrop-filter: blur(8px);
+      transition: box-shadow .2s, transform .2s;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.04);
     }
-    .exam-card:hover {
-      background: rgba(255,255,255,0.14);
-      border-color: rgba(255,255,255,0.35);
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
+    .exam-card:hover { box-shadow: 0 8px 24px rgba(15,23,42,0.10); transform: translateY(-3px); }
 
-    .card-icon { font-size: 44px; margin-bottom: 16px; }
+    .card-icon { font-size: 34px; margin-bottom: 12px; }
     .card-tag {
       font-size: 11px;
       font-weight: 700;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 20px;
-      margin-bottom: 12px;
-      letter-spacing: .5px;
+      margin-bottom: 10px;
+      letter-spacing: .3px;
+      background: var(--accent-pale);
+      color: var(--accent);
     }
-    .tag-plant { background: rgba(245,158,11,0.25); color: #fbbf24; }
-    .tag-industry { background: rgba(96,165,250,0.22); color: #93c5fd; }
-    .tag-tree  { background: rgba(52,211,153,0.2);  color: #6ee7b7; }
 
-    .card-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px; }
-    .card-desc  { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.65; margin-bottom: 20px; flex: 1; }
+    .card-title { font-size: 18px; font-weight: 900; color: #1e293b; margin-bottom: 6px; }
+    .card-desc  { font-size: 12.5px; color: #64748b; line-height: 1.6; margin-bottom: 16px; flex: 1; }
 
-    .card-subjects { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+    .card-subjects { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
     .subject-chip {
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.8);
+      background: #f1f5f9;
+      color: #475569;
       border-radius: 20px;
       padding: 3px 10px;
       font-size: 11px;
@@ -75,39 +83,39 @@
 
     .card-btn {
       width: 100%;
-      padding: 14px;
-      border-radius: 12px;
+      padding: 12px;
+      border-radius: 10px;
       border: none;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 800;
       cursor: pointer;
-      transition: all .2s;
+      background: var(--accent);
+      color: #fff;
+      transition: opacity .2s;
     }
-    .btn-plant { background: #f59e0b; color: #fff; }
-    .btn-plant:hover { background: #d97706; }
-    .btn-industry { background: #3b82f6; color: #fff; }
-    .btn-industry:hover { background: #2563eb; }
-    .btn-tree  { background: #34d399; color: #064e3b; }
-    .btn-tree:hover  { background: #10b981; }
+    .card-btn:hover { opacity: .88; }
 
-    .hub-footer { margin-top: 40px; text-align: center; color: rgba(255,255,255,0.35); font-size: 12px; }
+    .plant { --accent: #b45309; --accent-pale: #fef3c7; }
+    .industry { --accent: #2563eb; --accent-pale: #dbeafe; }
+    .tree { --accent: #40916c; --accent-pale: #d8f3dc; }
 
-    .order-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 20px;
-      padding: 6px 14px;
-      color: rgba(255,255,255,0.55);
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 36px;
+    /* ── Progress summary table ── */
+    .progress-wrap { width: 100%; max-width: 720px; }
+    .progress-title { font-size: 13px; font-weight: 800; color: #64748b; margin-bottom: 10px; padding-left: 2px; }
+    .progress-table-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; overflow-x: auto; }
+    table.progress-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.progress-table th {
+      text-align: left; padding: 10px 16px; background: #f8fafc; color: #94a3b8;
+      font-size: 11px; font-weight: 700; border-bottom: 1px solid #e5e7eb; white-space: nowrap;
     }
-    .order-badge span { color: #fbbf24; }
+    table.progress-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; color: #1e293b; white-space: nowrap; }
+    table.progress-table tr:last-child td { border-bottom: none; }
+
+    .hub-footer { margin-top: 32px; text-align: center; color: #94a3b8; font-size: 12px; }
 
     @media (max-width: 500px) {
-      .exam-card { width: 100%; max-width: 360px; padding: 28px 22px 22px; }
-      .hub-title { font-size: 22px; }
+      .exam-card { width: 100%; max-width: 360px; }
+      .hub-title { font-size: 19px; }
     }
   </style>
 </head>
@@ -120,14 +128,14 @@
   </div>
 
   <div class="order-badge">
-    💡 순서: <span>식물보호기능사</span> → <span>식물보호산업기사</span> → <span>나무의사</span>
+    💡 순서: <b>식물보호기능사</b> → <b>식물보호산업기사</b> → <b>나무의사</b>
   </div>
 
   <div class="cards">
 
-    <a class="exam-card" href="식물보호기능사/index.html">
+    <a class="exam-card plant" href="식물보호기능사/index.html">
       <span class="card-icon">🌿</span>
-      <span class="card-tag tag-plant">STEP 1 · 기능사</span>
+      <span class="card-tag">STEP 1 · 기능사</span>
       <div class="card-title">식물보호기능사</div>
       <div class="card-desc">나무의사 응시 자격 취득을 위한 첫 번째 관문. 식물병리·해충·잡초·농약 4과목으로 구성돼요.</div>
       <div class="card-subjects">
@@ -136,12 +144,12 @@
         <span class="subject-chip">🌿 잡초방제학</span>
         <span class="subject-chip">🧪 농약학</span>
       </div>
-      <button class="card-btn btn-plant">공부 시작하기 →</button>
+      <button class="card-btn">공부 시작하기 →</button>
     </a>
 
-    <a class="exam-card" href="식물보호산업기사/index.html">
+    <a class="exam-card industry" href="식물보호산업기사/index.html">
       <span class="card-icon">🌾</span>
-      <span class="card-tag tag-industry">STEP 2 · 산업기사</span>
+      <span class="card-tag">STEP 2 · 산업기사</span>
       <div class="card-title">식물보호산업기사</div>
       <div class="card-desc">기능사보다 한 단계 위 자격. 실기는 100% 필답형(약 20문항)이며 재배학 비중이 절반 이상이에요.</div>
       <div class="card-subjects">
@@ -151,12 +159,12 @@
         <span class="subject-chip">🌿 잡초방제학</span>
         <span class="subject-chip">🧪 농약학</span>
       </div>
-      <button class="card-btn btn-industry">공부 시작하기 →</button>
+      <button class="card-btn">공부 시작하기 →</button>
     </a>
 
-    <a class="exam-card" href="나무의사/index.html">
+    <a class="exam-card tree" href="나무의사/index.html">
       <span class="card-icon">🌳</span>
-      <span class="card-tag tag-tree">STEP 3 · 나무의사</span>
+      <span class="card-tag">STEP 3 · 나무의사</span>
       <div class="card-title">나무의사</div>
       <div class="card-desc">수목 병해충 진단·방제 전문 자격. 수목병리·수목해충·수목생리·산림토양·수목관리 5과목.</div>
       <div class="card-subjects">
@@ -166,14 +174,46 @@
         <span class="subject-chip">🌍 산림토양학</span>
         <span class="subject-chip">✂️ 수목관리학</span>
       </div>
-      <button class="card-btn btn-tree">공부 시작하기 →</button>
+      <button class="card-btn">공부 시작하기 →</button>
     </a>
 
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-title">📊 전체 학습 현황</div>
+    <div class="progress-table-wrap">
+      <table class="progress-table">
+        <thead><tr><th>시험</th><th>이론 학습</th><th>문제 정답</th></tr></thead>
+        <tbody id="progress-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="hub-footer">
     <p>초급 → 중급 → 고급 단계별 학습 · 이론 + 문제풀이 + 오답노트</p>
   </div>
+
+  <script>
+    function sumProgress(key) {
+      try {
+        const p = JSON.parse(localStorage.getItem(key) || '{}');
+        let read = 0, correct = 0;
+        ['초급', '중급', '고급'].forEach(l => {
+          if (p[l]) { read += (p[l].read || []).length; correct += p[l].correct || 0; }
+        });
+        return { read, correct };
+      } catch (e) { return { read: 0, correct: 0 }; }
+    }
+    const rows = [
+      { name: '🌿 식물보호기능사', key: 'plantStudyProgress' },
+      { name: '🌾 식물보호산업기사', key: 'plantIndustryStudyProgress' },
+      { name: '🌳 나무의사', key: 'studyProgress' }
+    ];
+    document.getElementById('progress-body').innerHTML = rows.map(r => {
+      const s = sumProgress(r.key);
+      return `<tr><td style="font-weight:700">${r.name}</td><td>${s.read}개</td><td>${s.correct}개</td></tr>`;
+    }).join('');
+  </script>
 
 </body>
 </html>
