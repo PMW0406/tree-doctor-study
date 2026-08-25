@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>실전 기출 모음 (비공개) 🔒</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .gate-wrap { max-width: 380px; margin: 60px auto; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px 28px; }
+  .gate-wrap h2 { font-size: 18px; margin-bottom: 6px; color: var(--text-dark); }
+  .gate-wrap p { font-size: 13px; color: var(--text-light); margin-bottom: 20px; }
+  .gate-field { margin-bottom: 14px; }
+  .gate-field label { display:block; font-size:12px; font-weight:700; color: var(--text-mid); margin-bottom: 5px; }
+  .gate-field input {
+    width: 100%; padding: 11px 12px; border: 2px solid var(--green-pale); border-radius: var(--radius-sm);
+    font-size: 14px; font-family: inherit; box-sizing: border-box;
+  }
+  .gate-field input:focus { outline: none; border-color: var(--green-mid); }
+  .gate-submit {
+    width: 100%; padding: 12px; border: none; border-radius: var(--radius-sm);
+    background: var(--green-dark); color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; margin-top: 6px;
+  }
+  .gate-submit:disabled { opacity: .6; cursor: default; }
+  .gate-error { color: #dc2626; font-size: 12px; margin-top: 10px; min-height: 16px; }
+
+  .exam-toolbar { display:flex; gap:8px; align-items:center; margin-bottom: 16px; flex-wrap: wrap; }
+  .exam-search { flex: 1; min-width: 160px; padding: 9px 12px; border: 2px solid var(--green-pale); border-radius: var(--radius-sm); font-size:13px; font-family:inherit; }
+  .logout-btn { background: var(--green-pale); color: var(--green-dark); border: none; border-radius: var(--radius-sm); padding: 9px 14px; font-size: 12px; font-weight:700; cursor:pointer; }
+  .set-group { margin-bottom: 22px; }
+  .set-title { font-size: 13px; font-weight: 800; color: var(--green-dark); margin-bottom: 8px; padding-left: 2px; }
+  .qcard { background: var(--white); border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 10px; border-left: 4px solid var(--green-light); }
+  .qcard-no { font-size: 11px; font-weight: 800; color: var(--green-mid); margin-bottom: 4px; }
+  .qcard-q { font-size: 14px; color: var(--text-dark); line-height:1.55; margin-bottom: 8px; white-space: pre-wrap; }
+  .qcard-toggle { font-size: 12px; color: var(--green-dark); font-weight:700; cursor: pointer; user-select: none; }
+  .qcard-a { display:none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--green-pale); font-size: 13px; color: var(--text-mid); line-height:1.55; white-space: pre-wrap; }
+  .qcard.open .qcard-a { display: block; }
+  .loading-msg, .empty-msg { text-align:center; color: var(--text-light); font-size: 13px; padding: 40px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:600;text-decoration:none;margin-right:4px">← 홈</a>
+    <span class="logo">🔒</span>
+    <h1>실전 기출 모음 (비공개)</h1>
+  </div>
+</header>
+
+<main>
+  <div id="gate" class="gate-wrap">
+    <h2>로그인이 필요해요</h2>
+    <p>이 메뉴는 본인만 볼 수 있도록 비공개로 운영돼요.</p>
+    <div class="gate-field">
+      <label>이메일</label>
+      <input type="email" id="gate-email" autocomplete="username">
+    </div>
+    <div class="gate-field">
+      <label>비밀번호</label>
+      <input type="password" id="gate-pw" autocomplete="current-password">
+    </div>
+    <button class="gate-submit" id="gate-submit">로그인</button>
+    <div class="gate-error" id="gate-error"></div>
+  </div>
+
+  <div id="content" style="display:none">
+    <div class="exam-toolbar">
+      <input type="text" class="exam-search" id="search" placeholder="문제 내용 검색...">
+      <button class="logout-btn" id="logout-btn">로그아웃</button>
+    </div>
+    <div id="list"><div class="loading-msg">불러오는 중...</div></div>
+  </div>
+</main>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const supabase = createClient(
+  'https://emaoowngreujdyxaigrd.supabase.co',
+  'sb_publishable_mX_MJUevqR5VVTrbZqeu_A_l47nuhAq'
+);
+
+const gate = document.getElementById('gate');
+const content = document.getElementById('content');
+const gateError = document.getElementById('gate-error');
+const submitBtn = document.getElementById('gate-submit');
+let allRows = [];
+
+async function showApp() {
+  gate.style.display = 'none';
+  content.style.display = 'block';
+  await loadQuestions();
+}
+
+async function loadQuestions() {
+  const { data, error } = await supabase
+    .from('moducbt_questions')
+    .select('*')
+    .order('source_id', { ascending: true })
+    .order('problem_no', { ascending: true });
+
+  if (error) {
+    document.getElementById('list').innerHTML = `<div class="empty-msg">불러오기 실패: ${error.message}</div>`;
+    return;
+  }
+  allRows = data || [];
+  render(allRows);
+}
+
+function render(rows) {
+  const list = document.getElementById('list');
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty-msg">검색 결과가 없어요.</div>';
+    return;
+  }
+  const groups = {};
+  rows.forEach(r => {
+    (groups[r.source_id] = groups[r.source_id] || []).push(r);
+  });
+  let html = '';
+  Object.keys(groups).forEach((sid, idx) => {
+    html += `<div class="set-group"><div class="set-title">📄 기출 세트 ${idx + 1} (${groups[sid].length}문항)</div>`;
+    groups[sid].forEach(r => {
+      html += `
+        <div class="qcard">
+          <div class="qcard-no">문제 ${r.problem_no}</div>
+          <div class="qcard-q">${escapeHtml(r.question)}</div>
+          <div class="qcard-toggle" onclick="this.parentElement.classList.toggle('open')">정답 보기 ▾</div>
+          <div class="qcard-a">${escapeHtml(r.answer)}</div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+  list.innerHTML = html;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+document.getElementById('search').addEventListener('input', (e) => {
+  const q = e.target.value.trim();
+  if (!q) { render(allRows); return; }
+  render(allRows.filter(r => r.question.includes(q) || r.answer.includes(q)));
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await supabase.auth.signOut();
+  location.reload();
+});
+
+submitBtn.addEventListener('click', doLogin);
+document.getElementById('gate-pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+
+async function doLogin() {
+  const email = document.getElementById('gate-email').value.trim();
+  const password = document.getElementById('gate-pw').value;
+  gateError.textContent = '';
+  submitBtn.disabled = true;
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  submitBtn.disabled = false;
+  if (error) {
+    gateError.textContent = '로그인 실패: 이메일 또는 비밀번호를 확인해주세요.';
+    return;
+  }
+  showApp();
+}
+
+// restore existing session
+supabase.auth.getSession().then(({ data }) => {
+  if (data.session) showApp();
+});
+</script>
+
+</body>
+</html>
