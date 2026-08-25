@@ -164,11 +164,11 @@ main { max-width: 900px; margin: 0 auto; padding: 28px 24px 80px; }
   .stat-tile { min-width: 0; }
   .sidebar {
     width: 100%; height: auto; position: static; flex-direction: row;
-    overflow-x: auto; border-right: none; border-bottom: 1px solid #e5e7eb; padding: 10px 12px;
+    overflow-x: visible; border-right: none; border-bottom: 1px solid #e5e7eb; padding: 10px 12px;
   }
   .sidebar-brand, .sidebar-back { display: none; }
-  .sidebar nav { flex-direction: row; gap: 6px; }
-  .sidebar nav button, .sidebar nav a { white-space: nowrap; }
+  .sidebar nav { flex-direction: row; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .sidebar nav button, .sidebar nav a { width: auto; flex: 0 0 auto; white-space: nowrap; }
   main { padding: 18px 16px 70px; }
 
   .stage-table-wrap { overflow-x: visible; border: none; background: transparent; }
